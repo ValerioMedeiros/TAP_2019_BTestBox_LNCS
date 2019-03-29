@@ -22,7 +22,7 @@
 
 \begin{document}
 %
-\title{BTestBox - A tool for testing B translators and coverage of B models \thanks{Supported by NPAD to provide the supercomputer.}}
+\title{BTestBox - A tool for testing B translators and coverage of B models}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
@@ -97,12 +97,12 @@ generation of test cases from models \cite{dalal1999model}. The proposed tool us
 Using a formal method such as B is a technique to assure the behaviour of a specification.
 Thus, this method has been used for many researches, over many years, in the development of critical systems \cite{valerio_thesis:2016}. B is based on the Dijkstra notes \cite{dijkstra1976discipline}; it uses the generalised substitution theory \cite{hoare2002proof} and the abstract machine notation. It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine and with sub-sequential modelling, until a concrete implementation. The goal is to have a proven implementation. However, the B code needs to be translated into binary code. This process is a weak point and can lead to errors. The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
-\begin{figure}[ht]
+\begin{figure*}[ht]
     \centering
     \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
     \caption{Overview of the B process with the BTestBox process.}
     \label{fig:Bmethod}
-\end{figure}
+\end{figure*}
 
 Translators are used to perform the conversion from B representation to another computer language such as C, ADA, and LLVM. Each translator can translate a subset of B, called B0. Moreover, a translator can have a particularity and only translate a subset of B0. %Such restrictions are not well documented and may confuse the user. 
 Additionally, compilers can insert bugs even with the correct source code \cite{leroy2009formal}, and the code generators used with B demand additional safety criteria because they are employed in critical systems.
@@ -114,6 +114,9 @@ The BTestBox may be used as an Atelier-B extension and, from its interface, can 
 In the current state, BTestBox is fully automatic and capable of testing translations from B implementations to C, thus indicating if there is an error in the translation and reporting the coverage rate for the following criteria: Statement Coverage, Clause Coverage, Path Coverage, Branch Coverage, and Combinatorial Coverage. 
 %Each coverage has its functionality such as: identifying dead code with Code Coverage; logic tautology with functional coverages (Path and Branch coverage); and analysing the program flow with different logic decisions (Clause Coverage and MC/DC). 
 The tool and the results of an evaluation with the B language are presented in this paper. The contributions of BTestBox are the following:
+
+
+
 
 \begin{itemize}
     \item Avoiding the waste of time with the construction of manual test cases by supplying a full automatic model-based process for generation of executable supported criteria test cases for B implementations.% \textcolor{red}{ }
@@ -158,9 +161,9 @@ For some coverage criteria, it is required that the graph starts at one node and
 
 Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. Given the B implementation found in Figure \ref{fig:russianMultImp} and its ``RussianMultiplication'' operation, BTestBox can draw the graph shown in Figure \ref{fig:russianMultGraph}.
 
-\begin{figure}
-    \centering
-        \begin{minipage}{0.72\textwidth}
+\begin{figure}[ht]
+        \centering
+        \begin{minipage}{0.45\textwidth}
             \centering
         
             \begin{minted}[escapeinside=||,mathescape=true,frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
@@ -186,7 +189,7 @@ END
     \end{minipage}%
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.45\textwidth]{imagens/lacoGrafo.png}
 \caption{Graph of the operation ``RussianMultiplication''.}
@@ -292,7 +295,7 @@ The test cases are defined based on the chosen coverage criteria. Different crit
 
 \begin{figure}
     \centering
-    \begin{minipage}{0.73\textwidth}
+    \begin{minipage}{0.45\textwidth}
         \centering
         
         \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
@@ -338,7 +341,7 @@ Once the B component for setting is written, our tool prepares another component
 
 \begin{figure}
     \centering
-    \begin{minipage}{0.63\textwidth}
+    \begin{minipage}{0.45\textwidth}
         \centering
         \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
 LOCAL_OPERATIONS
@@ -481,11 +484,10 @@ Nesting level                                                                   
 
 For some operations, such as the component with operations of 2 nested instructions in 10 blocks, the number of paths calculated were over 750,000. Since the B implementations are generated at random, most of the paths are unfeasible. This case shows that the time for evaluation is a problem, but it is also possible to infer that picking a better method for choosing the tested path will drastically reduce the time of BTestBox execution. In Table \ref{tab:escalabilidadeComp2}, it is possible to notice that the evaluation time can take more than 16 days.
 
-\begin{table}[h!]
+\begin{table*}[h!]
 \centering
 \caption{Scalability test for the COMP\_2seq10 implementation}
 \label{tab:escalabilidadeComp2}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 Component                     & Operation & Quantity of Paths & \begin{tabular}[c]{@{}c@{}}Total execution \\ time (seconds)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Predicate evaluation\\  time (seconds)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Time spent \\ for evaluation (\%)\end{tabular} \\ \hline
@@ -493,6 +495,22 @@ Component                     & Operation & Quantity of Paths & \begin{tabular}[
                               & ID00001   & 87480             & 205552.43                                                                 & 168452.96                                                                      & 81.95                                                                     \\ \cline{2-6} 
                               & ID00002   & 787320            & 1781627.72                                                                & 1423590.45                                                                     & 79.90                                                                     \\ \hline
 \end{tabular}
+\end{table*}
+
+To reduce the time of the tests, we implemented threads inside the tool. This way, BTestBox can execute his procedure to various operations of the same implementation and the evaluation with ProB occur at the same time for all. This severally reduce the time for the predicate evaluation. Using a supercomputer, capable of running all the operations at once, the time is defined based in the most expensive operation. In Table \ref{tab:escalabilidadeSuper}, is possible to observe the results of tests using 20 cores of a supercomputer with 80 Gigabytes of RAM, the time for the implementation Comp3\_Seq1 was reduced in 90\%.
+
+\begin{table}[h]
+\centering
+\caption{Scalability test with the supercomputer}
+\label{tab:escalabilidadeSuper}
+\resizebox{0.45\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|}
+\hline
+Component                                                                        & Comp1\_Seq1 & Comp2\_Seq1 & Comp3\_Seq1 \\ \hline
+\begin{tabular}[c]{@{}c@{}}Execution time\\ without\\ supercomputer\end{tabular} & 587,36 s    & 3102,89 s   & 18215,17 s  \\ \hline
+\begin{tabular}[c]{@{}c@{}}Execution time\\ with \\ supercomputer\end{tabular}   & 38,08 s     & 176,91 s    & 2286,42 s   \\ \hline
+\begin{tabular}[c]{@{}c@{}}Time reduced\\ for evaluation\end{tabular}            & 93,52\%     & 94,30\%     & 87,45\%     \\ \hline
+\end{tabular}%
 }
 \end{table}
 
@@ -510,23 +528,6 @@ Component                     & Operation & Quantity of Paths & \begin{tabular}[
 % \begin{tabular}[c]{@{}c@{}}Time spent for\\  evaluation (\%)\end{tabular}      & 88.54    & 81.95     & 79.90      \\ \hline
 % \end{tabular}
 % \end{table}
-
-To reduce the time of the tests, we implemented threads inside the tool. This way, BTestBox can execute his procedure to various operations of the same implementation and the evaluation with ProB occur at the same time for all. This severally reduce the time for the predicate evaluation. Using a supercomputer, capable of running all the operations at once, the time is defined based in the most expensive operation. In Table \ref{tab:escalabilidadeSuper}, is possible to observe the results of tests using 20 cores of a supercomputer with 80 Gigabytes of RAM, the time for the implementation Comp3\_Seq1 was reduced in 90\%.
-
-\begin{table}[h]
-\centering
-\caption{Scalability test with the supercomputer}
-\label{tab:escalabilidadeSuper}
-%\resizebox{0.45\textwidth}{!}{%
-\begin{tabular}{|c|c|c|c|}
-\hline
-Component                                                                        & Comp1\_Seq1 & Comp2\_Seq1 & Comp3\_Seq1 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Execution time\\ without\\ supercomputer\end{tabular} & 587,36 s    & 3102,89 s   & 18215,17 s  \\ \hline
-\begin{tabular}[c]{@{}c@{}}Execution time\\ with \\ supercomputer\end{tabular}   & 38,08 s     & 176,91 s    & 2286,42 s   \\ \hline
-\begin{tabular}[c]{@{}c@{}}Time reduced\\ for evaluation\end{tabular}            & 93,52\%     & 94,30\%     & 87,45\%     \\ \hline
-\end{tabular}%
-%}
-\end{table}
 
 \section{Potential Improvements}
 
@@ -578,98 +579,26 @@ When considering the evaluation of the predicate, BTestBox inherits every limita
 
 Since BTestBox uses B translators, if the translator has any limitation to B language, it is also applied to our tool. However, there are several B translators, and the BTestBox's approach is compatible with all of them. 
 
-%We are currently developing an approach using threads to decrease the time for running one implementation with more than one operation. But, the experiments are not concluded due the project still in progress.
 We developed an approach using threads that decreased the time for running one implementation with more than one operation. This cut the time needed for solving operations, using a computer with sufficient cores for running all the operations, the time of execution is bounded to the most expensive operation. This is an improvement that made the execution of big implementations ten times faster.
 
-\section{Acknowledgement} \label{sec:acknowledgement}
-The authors would like to especially thank ClearSy System Engineering for providing the industrial case and support. 
+\section*{Acknowledgement}
+  The authors would like to especially thank ClearSy System Engineering for providing the industrial case and support. 
 
-  %The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions. 
+  The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions. 
   
-The work is supported by the Federal Institute of the Rio Grande do Norte, the Federal University of Rio Grande do Norte and CAPES (Coordination of Improvement of Higher Level Personnel). This work was grammatically reviewed by Antonio Henrique Nepomuceno Coelho (Federal English Teacher at IFRN).
+  The work is supported by the Federal Institute of the Rio Grande do Norte, the Federal University of Rio Grande do Norte and CAPES (Coordination of Improvement of Higher Level Personnel).
+  This work was grammatically reviewed by Antonio Henrique Nepomuceno Coelho (Federal English Teacher at IFRN).
 
 
 
-
-
-\section{First Section}
-\subsection{A Subsection Sample}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
-
-Subsequent paragraphs, however, are indented.
-
-\subsubsection{Sample Heading (Third Level)} Only two levels of
-headings should be numbered. Lower level headings remain unnumbered;
-they are formatted as run-in headings.
-
-\paragraph{Sample Heading (Fourth Level)}
-The contribution should contain no more than four levels of
-headings. Table~\ref{tab1} gives a summary of all heading levels.
-
-\begin{table}
-\caption{Table captions should be placed above the
-tables.}\label{tab1}
-\begin{tabular}{|l|l|l|}
-\hline
-Heading level &  Example & Font size and style\\
-\hline
-Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
-1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
-2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
-3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
-4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
-\hline
-\end{tabular}
-\end{table}
-
-
-\noindent Displayed equations are centered and set on a separate
-line.
-\begin{equation}
-x + y = z
-\end{equation}
-Please try to avoid rasterized images for line-art diagrams and
-schemas. Whenever possible, use vector graphics instead (see
-Fig.~\ref{fig1}).
-
-\begin{figure}
-\includegraphics[width=\textwidth]{fig1.eps}
-\caption{A figure caption is always placed below the illustration.
-Please note that short captions are centered, while long ones are
-justified by the macro package automatically.} \label{fig1}
-\end{figure}
-
-\begin{theorem}
-This is a sample theorem. The run-in heading is set in bold, while
-the following text appears in italics. Definitions, lemmas,
-propositions, and corollaries are styled the same way.
-\end{theorem}
-%
-% the environments 'definition', 'lemma', 'proposition', 'corollary',
-% 'remark', and 'example' are defined in the LLNCS documentclass as well.
-%
-\begin{proof}
-Proofs, examples, and remarks have the initial word in italics,
-while the following text appears in normal font.
-\end{proof}
-For citations of references, we prefer the use of square brackets
-and consecutive numbers. Citations using labels or the author/year
-convention are also acceptable. The following bibliography provides
-a sample reference list with entries for journal
-articles~\cite{ref_article1}, an LNCS chapter~\cite{ref_lncs1}, a
-book~\cite{ref_book1}, proceedings without editors~\cite{ref_proc1},
-and a homepage~\cite{ref_url1}. Multiple citations are grouped
-\cite{ref_article1,ref_lncs1,ref_book1},
-\cite{ref_article1,ref_book1,ref_proc1,ref_url1}.
 %
 % ---- Bibliography ----
 %
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
- \bibliographystyle{splncs04}
+
+\bibliographystyle{splncs04}
 
 
 \bibliography{bibs} 
