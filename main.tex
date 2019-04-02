@@ -30,22 +30,36 @@
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
-\author{Diego de Azevedo Oliveira \inst{1}\orcidID{0000-1111-2222-3333} \and
-Val{\'e}rio Medeiros Jr\inst{2,3}\orcidID{1111-2222-3333-4444} \and
-David D{\'e}harbe\inst{3}\orcidID{2222--3333-4444-5555} \and
-Martin A. Musicante \inst{3}\orcidID{2222--3333-4444-5555}
+\author{Diego de Azevedo Oliveira \inst{1} \and %\orcidID{0000-1111-2222-3333} \and
+Val{\'e}rio Medeiros Jr\inst{2}\orcidID{0000-0001-6255-5026} \and
+David D{\'e}harbe\inst{3}\and %\orcidID{2222--3333-4444-5555} \and
+Martin A. Musicante \inst{4}\orcidID{0000-0001-5589-3895}
 }
 %
 \authorrunning{D. Azevedo et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
-%
-\institute{Princeton University, Princeton NJ 08544, USA \and
-Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
-\email{lncs@springer.com}\\
-\url{http://www.springer.com/gp/computer-science/lncs} \and
-ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
-\email{\{abc,lncs\}@uni-heidelberg.de}}
+
+\institute{Université de Sherbrooke, Canada\\
+\email{diegodeazevedooliveira@gmail.com}
+\and
+Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
+\email{valerio.medeiros@ifrn.edu.br} \and
+Clearsy System Engineering, France\\
+\email{david.deharbe@clearsy.com}
+\and
+Universidade Federal do Rio Grande do Norte,Brazil\\
+\email{mam@dimap.ufrn.br}}
+
+%\institute{Université de Sherbrooke, Canada \and
+%Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+%\email{lncs@springer.com}\\
+%\url{http://www.springer.com/gp/computer-science/lncs} \and
+%ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
+%\email{\{abc,lncs\}@uni-heidelberg.de}}
+%\end{comment}
+
+
 %
 \maketitle              % typeset the header of the contribution
 %
@@ -161,42 +175,63 @@ For some coverage criteria, it is required that the graph starts at one node and
     \item Combinatorial Coverage (CoC): Given a predicate, each possible combination of the clauses shall be evaluated \cite{ammann2003coverage}.
 \end{itemize}
 
-Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. Given the B implementation found in Figure \ref{fig:russianMultImp} and its ``RussianMultiplication'' operation, BTestBox can draw the graph shown in Figure \ref{fig:russianMultGraph}.
+Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. Given the B implementation found in Figure \ref{fig:russianMultImp} and its ``RussMult'' operation, BTestBox can draw the graph shown in Figure \ref{fig:russianMultGraph}.
 
-\begin{figure}[ht]
-        \centering
-        \begin{minipage}{0.45\textwidth}
-            \centering
+% \begin{figure}[ht]
+%         \centering
+%         \begin{minipage}{0.58\textwidth}
+%             \centering
         
-            \begin{minted}[escapeinside=||,mathescape=true,frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
-IMPLEMENTATION RussianMult_i
-REFINES RussianMult
-CONCRETE_VARIABLES  xx, yy, total
-INVARIANT  xx |$\in$| |$\mathbb{N}$| |$\wedge$| yy |$\in$| |$\mathbb{N}$| |$\wedge$| total |$\in$| |$\mathbb{N}$|
-INITIALISATION xx, yy, total := 0, 0, 0
-OPERATIONS
-  RussianMultiplication(aa,bb) = 
-    xx := aa; yy := bb; total := 0;
-    WHILE xx > 0 DO
-      IF xx mod 2 = 1 THEN total := total + yy END;
-      xx := xx / 2; yy := yy * 2
-    INVARIANT xx |$\in$| |$\mathbb{N}$| |$\wedge$| total + xx * yy = aa * bb
-    VARIANT xx
-    END
-  END
-END
-                \end{minted}
-        \caption{Implementation of Russian multiplication. \cite{schneider2001b}}
-        \label{fig:russianMultImp}
-    \end{minipage}%
-\end{figure}
+%             \begin{minted}[escapeinside=||,mathescape=true,frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
+% IMPLEMENTATION RussianMult_i
+% REFINES RussianMult
+% CONCRETE_VARIABLES  xx, yy, total
+% INVARIANT  xx |$\in$| |$\mathbb{N}$| |$\wedge$| yy |$\in$| |$\mathbb{N}$| |$\wedge$| total |$\in$| |$\mathbb{N}$|
+% INITIALISATION xx, yy, total := 0, 0, 0
+% OPERATIONS
+%   RussMult(aa,bb) = 
+%     xx := aa; yy := bb; total := 0;
+%     WHILE xx > 0 DO
+%       IF xx mod 2 = 1 THEN total := total + yy END;
+%       xx := xx / 2; yy := yy * 2
+%     INVARIANT xx |$\in$| |$\mathbb{N}$| |$\wedge$| total + xx * yy = aa * bb
+%     VARIANT xx
+%     END
+%   END
+% END
+%                 \end{minted}
+%         \caption{Implementation of Russian multiplication. \cite{schneider2001b}}
+%         \label{fig:russianMultImp}
+%     \end{minipage}%
+% \end{figure}
 
-\begin{figure}[ht]
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=0.45\textwidth]{imagens/lacoGrafo.png}
+% \caption{Graph of the operation ``RussMult''.}
+% \label{fig:russianMultGraph}
+% \end{figure}
+
+\begin{figure*}[ht]
+\begin{minipage}{0.54\textwidth}
+\begin{subfigure}{\textwidth}
 \centering
-\includegraphics[width=0.45\textwidth,natwidth=900,natheight=1080]{imagens/lacoGrafo.png}
-\caption{Graph of the operation ``RussianMultiplication''.}
+
+\includegraphics[width = \textwidth]{imagens/russianMult_i2.png}
+\caption{Implementation. \cite{schneider2001b}}
+\label{fig:russianMultImp}
+\end{subfigure}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+\begin{subfigure}{\textwidth}
+\centering
+\includegraphics[width = \textwidth]{imagens/lacoGrafo.png}
+\caption{Graph.}
 \label{fig:russianMultGraph}
-\end{figure}
+\end{subfigure}
+\end{minipage}
+\caption{Russia Multiplication Graph and Implementation.}
+\end{figure*}
 
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
 Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths. However, testing uncountable paths is not mechanically possible.
@@ -220,9 +255,9 @@ $$\{P\} C \{Q\}$$
 
 For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic. We chose this approach because of the B method property for proved implementations, which implies that a proved implementation always has to finish. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
 
-%In order to generate the test cases, BTestBox writes the predicate related to each previous generated path of the model under test or until the chosen criteria is achieved. Even more, different criterion has separate goals, for example, with the PC is necessary to test every path and for the operation ``RussianMultiplication'' is necessary to test the three. Although, for ST if the path 1 is feasible, then just it need to be executed. Choosing the BC for the operation in the Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
+%In order to generate the test cases, BTestBox writes the predicate related to each previous generated path of the model under test or until the chosen criteria is achieved. Even more, different criterion has separate goals, for example, with the PC is necessary to test every path and for the operation ``RussMult'' is necessary to test the three. Although, for ST if the path 1 is feasible, then just it need to be executed. Choosing the BC for the operation in the Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
- BTestBox writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussianMultiplication'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
+ BTestBox writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
 The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
 
@@ -267,13 +302,13 @@ $$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$
 
 The next step is to call ProB and solve the predicate. The returned values for the inputs of the second path are aa = 2, bb = 0, xx = 0, yy = 0, total = 0. Identically, the outputs of path 2 are foo\_aa = 2, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0.
 
-%After this procedure, BTestBox found the necessary test cases for achieving BC for the operation ``RussianMultiplication''. And they are shown in the table \ref{tab:TestCases}.
-After this procedure, BTestBox found the necessary test cases for achieving the BC criterion for the ``RussianMultiplication'' operation, which are shown in Table \ref{tab:TestCases}.
+%After this procedure, BTestBox found the necessary test cases for achieving BC for the operation ``RussMult''. And they are shown in the table \ref{tab:TestCases}.
+After this procedure, BTestBox found the necessary test cases for achieving the BC criterion for the ``RussMult'' operation, which are shown in Table \ref{tab:TestCases}.
 
 
 \begin{table}[h]
 \centering
-\caption{Test cases for ``RussianMultiplication''}
+\caption{Test cases for ``RussMult''}
 \begin{tabular}{c|c|c|c|c|}
 \cline{2-5}
                                 & \multicolumn{2}{c|}{Test 1} & \multicolumn{2}{c|}{Test 2} \\ \hline
@@ -295,85 +330,99 @@ Our tool copies the user files to keep the original B components and adds operat
 
 The test cases are defined based on the chosen coverage criteria. Different criterion will likely result in diverse test cases. BTestBox writes the test files capable of setting the test to a state defined in the test case in B. In a future process step, when the B files are translated to a computer language, all the test files are also translated using the same translator. The set test case has an operation for each test case scenario found during Section \ref{writingPredicates}. Such form allows it to test each test case in a different spot and makes it possible for the user to check when a failure is detected. Those operations call the operation under test with the inputs and create a auxiliary variable for storing and checking the values after the call. If the values are the same as expected, then the verdict ``true'' is returned, otherwise, the verdict is ``false''. Figure \ref{fig:SetTestModel} shows how the concrete set test operations are constructed.
 
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
+% \begin{figure}
+%     \centering
+%     \begin{minipage}{0.46\textwidth}
+%         \centering
         
-        \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
-OPERATIONS
-  verdict <-- TEST_1_RussianMultiplication =
-  BEGIN 
-    SetVariablesForTestRussianMultiplication(0,0,0);
-    VAR aux1, aux2, aux3, aux4, aux5 IN
-      RussianMultiplication(1,0);
-      aux1 <-- Get_xx;
-      aux2 <-- Get_yy;
-      aux3 <-- Get_total;
-      aux4 <-- Get_aa;
-      aux5 <-- Get_bb;
-      IF aux1=0 AND aux2=0 AND aux3=0 AND
-         aux4=1 AND aux5=0 THEN
-        verdict := TRUE
-      ELSE verdict := FALSE END
-    END 
-  END;
-  verdict <-- TEST_2_RussianMultiplication =
-  BEGIN 
-    SetVariablesForTestRussianMultiplication(0,0,0);
-    VAR aux1, aux2, aux3 IN
-      RussianMultiplication(2,0);
-      aux1 <-- Get_xx;
-      aux2 <-- Get_yy;
-      aux3 <-- Get_total;
-      aux4 <-- Get_aa;
-      aux5 <-- Get_bb;
-      IF aux1=0 AND aux2=0 AND aux3=0 AND
-         aux4=2 AND aux5=0 THEN
-        verdict := TRUE
-      ELSE verdict := FALSE END
-    END 
-                \end{minted}
-        \caption{Concrete set test operations.}
-        \label{fig:SetTestModel}
-    \end{minipage}%
-\end{figure}
+%         \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
+% OPERATIONS
+%  verdict <-- TEST_1_RussMult =
+%  BEGIN 
+%   SetVarForTestRussMult(0,0,0);
+%   VAR a1, a2, a3, a4, a5 IN
+%   RussMult(1,0);
+%   a1 <-- Get_xx; a2 <-- Get_yy;
+%   a3 <-- Get_total;
+%   a4 <-- Get_aa; a5 <-- Get_bb;
+%   IF a1=0 AND a2=0 AND a3=0 AND
+%       a4=1 AND a5=0 THEN
+%     verdict := TRUE
+%   ELSE verdict := FALSE END
+%   END 
+%  END;
+%  verdict <-- TEST_2_RussMult =
+%  BEGIN 
+%   SetVarForTestRussMult(0,0,0);
+%   VAR a1, a2, a3, a4, a5 IN
+%   RussMult(2,0);
+%   a1 <-- Get_xx; a2 <-- Get_yy;
+%   a3 <-- Get_total;
+%   a4 <-- Get_aa; a5 <-- Get_bb;
+%   IF a1=0 AND a2=0 AND a3=0 AND
+%       a4=2 AND a5=0 THEN
+%     verdict := TRUE
+%   ELSE verdict := FALSE END
+%   END 
+%                 \end{minted}
+%         \caption{Concrete set test operations.}
+%         \label{fig:SetTestModel}
+%     \end{minipage}%
+% \end{figure}
+
+\begin{figure*}[ht]
+\begin{minipage}{0.5\textwidth}
+\begin{subfigure}{\textwidth}
+\centering
+\includegraphics[width = \textwidth]{imagens/concreteSetTest.png}
+\caption{Concrete set test operations.}
+\label{fig:SetTestModel}
+\end{subfigure}
+\end{minipage}
+\begin{subfigure}{0.49\textwidth}
+\centering
+\includegraphics[width = \textwidth]{imagens/concreteRunTest.png}
+\caption{Concrete run test operations.}
+\label{fig:RunTestModel}
+\end{subfigure}
+\caption{Concrete test operations}
+\end{figure*}
 
 Once the B component for setting is written, our tool prepares another component capable of reading the answer of each test case operation. It can be found in Figure \ref{fig:RunTestModel}. The running of the test component implies in an approach to verify the B translator. Therefore, the user may have two possibilities of checking the compiler: the one automatically executed by BTestBox or animating the B component responsible for running the test.
 
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
-LOCAL_OPERATIONS
-  verdict <-- Test_RussianMultiplication =
-    ANY kk WHERE kk : BOOL THEN verdict := kk END;
-OPERATIONS
-  verdict <-- Test_RussianMultiplication =
-  BEGIN
-    VAR aux1, aux2 IN
-      aux1 <-- TEST_1_RussianMultiplication;
-      aux2 <-- TEST_2_RussianMultiplication;
-      IF aux1 = TRUE & aux2 = TRUE THEN
-        verdict := TRUE
-      ELSE verdict := FALSE END
-    END
-  END;
-  verdict <-- Test_All =
-  BEGIN 
-    VAR v0 IN
-      v0 <-- Test_RussianMultiplication;
-      IF v0 = TRUE THEN
-        verdict := TRUE
-      ELSE verdict := FALSE END
-    END
-  END
-        \end{minted}
-        \caption{Concetre run test operations.}
-        \label{fig:RunTestModel}
-    \end{minipage}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \begin{minipage}{0.45\textwidth}
+%         \centering
+%         \begin{minted}[frame=single,firstnumber=1,linenos=false,breaklines,fontsize=\small]{ocaml}
+% LOCAL_OPERATIONS
+%   verdict <-- Test_RussMult =
+%     ANY kk WHERE kk : BOOL THEN verdict := kk END;
+% OPERATIONS
+%   verdict <-- Test_RussMult =
+%   BEGIN
+%     VAR a1, a2 IN
+%       a1 <-- TEST_1_RussMult;
+%       a2 <-- TEST_2_RussMult;
+%       IF a1 = TRUE & a2 = TRUE THEN
+%         verdict := TRUE
+%       ELSE verdict := FALSE END
+%     END
+%   END;
+%   verdict <-- Test_All =
+%   BEGIN 
+%     VAR v0 IN
+%       v0 <-- Test_RussMult;
+%       IF v0 = TRUE THEN
+%         verdict := TRUE
+%       ELSE verdict := FALSE END
+%     END
+%   END
+%         \end{minted}
+%         \caption{Concrete run test operations.}
+%         \label{fig:RunTestModel}
+%     \end{minipage}
+% \end{figure}
 
 In the BTestBox usual process, the next step is the translation of the code by a B compiler. While using a B translator, it is necessary to create a main file - BTestBox has the ability to write this piece of code. Finally, the code is translated, but it is not available for execution. Our tool also asks for a compiler, defined by the user, to create an executable file of the test. With the program of the test, it is possible to show the results of the execution in a new window for the user.
 
@@ -490,13 +539,14 @@ For some operations, such as the component with operations of 2 nested instructi
 \centering
 \caption{Scalability test for the COMP\_2seq10 implementation}
 \label{tab:escalabilidadeComp2}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 Component                     & Operation & Quantity of Paths & \begin{tabular}[c]{@{}c@{}}Total execution \\ time (seconds)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Predicate evaluation\\  time (seconds)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Time spent \\ for evaluation (\%)\end{tabular} \\ \hline
 \multirow{3}{*}{COMP\_2seq10} & ID00000   & 4320              & 8637.51                                                                   & 7647.99                                                                        & 88.54                                                                     \\ \cline{2-6} 
                               & ID00001   & 87480             & 205552.43                                                                 & 168452.96                                                                      & 81.95                                                                     \\ \cline{2-6} 
                               & ID00002   & 787320            & 1781627.72                                                                & 1423590.45                                                                     & 79.90                                                                     \\ \hline
-\end{tabular}
+\end{tabular}}
 \end{table*}
 
 To reduce the time of the tests, we implemented threads inside the tool. This way, BTestBox can execute his procedure to various operations of the same implementation and the evaluation with ProB occur at the same time for all. This severally reduce the time for the predicate evaluation. Using a supercomputer, capable of running all the operations at once, the time is defined based in the most expensive operation. In Table \ref{tab:escalabilidadeSuper}, is possible to observe the results of tests using 20 cores of a supercomputer with 80 Gigabytes of RAM, the time for the implementation Comp3\_Seq1 was reduced in 90\%.
@@ -505,7 +555,7 @@ To reduce the time of the tests, we implemented threads inside the tool. This wa
 \centering
 \caption{Scalability test with the supercomputer}
 \label{tab:escalabilidadeSuper}
-\resizebox{0.45\textwidth}{!}{%
+\resizebox{0.6\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 Component                                                                        & Comp1\_Seq1 & Comp2\_Seq1 & Comp3\_Seq1 \\ \hline
