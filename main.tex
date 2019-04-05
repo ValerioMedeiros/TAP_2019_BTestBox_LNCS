@@ -159,7 +159,7 @@ This section describes how BTestBox identifies the paths from a given B implemen
     \item An E set of edges, where E is a subset of $N \times N$.
 \end{itemize}
 
-Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets.
+\marginpar{Talvez alguma coisa dos próximos 6 parágrafos possam ser apagadas}Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets.
 
 Edges are elements that go from one node and reach the other and are written as ($n_i$,$n_j$). This demonstrates that the edge connects the $n_i$ node to $n_j$.
 
@@ -258,7 +258,7 @@ For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic
 
  BTestBox writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
-The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
+\marginpar{Talvez alguma coisa da descrição dos predicados possa ser omitida. Essa explicação é bastante grande e ocupa muito espaço, se queremos demonstrar mais os resultados isso talvez possa ser simplificado}The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
 
 $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0$$
 
@@ -323,11 +323,11 @@ After this procedure, BTestBox found the necessary test cases for achieving the 
 
 \subsection{Creating Test Case Files}
 
-In this section, we describe how BTestBox can manipulate the user files, insert ```get'' and ``set'' operations, and execute the test with the previously calculated inputs. 
+\marginpar{Talvez os 3 primeiros parágrafos possam ser modificados, acho que principalmente o segundo paragrafo}In this section, we describe how BTestBox can manipulate the user files, insert ```get'' and ``set'' operations, and execute the test with the previously calculated inputs. 
 
 Our tool copies the user files to keep the original B components and adds operations capable of changing the state of the variables. The ``set'' operation is responsible for setting the input values of variables that are defined and not used in the operation call. For the Russian multiplication implementation, the variables are xx, yy, and total. The ``get'' operations are responsible of providing the current state of each variable on the component. Every variable has a different ``get'' operation. Writing them to the model under test allows the BTestBox to check the state of the variables and it compares with the expected output that was previously calculated.
 
-The test cases are defined based on the chosen coverage criteria. Different criterion will likely result in diverse test cases. BTestBox writes the test files capable of setting the test to a state defined in the test case in B. In a future process step, when the B files are translated to a computer language, all the test files are also translated using the same translator. The set test case has an operation for each test case scenario found during Section \ref{writingPredicates}. Such form allows it to test each test case in a different spot and makes it possible for the user to check when a failure is detected. Those operations call the operation under test with the inputs and create a auxiliary variable for storing and checking the values after the call. If the values are the same as expected, then the verdict ``true'' is returned, otherwise, the verdict is ``false''. Figure \ref{fig:SetTestModel} shows how the concrete set test operations are constructed.
+The test cases are defined based on the chosen coverage criteria. Different criterion will likely result in diverse test cases. BTestBox writes the test files capable of setting the test to a state defined in the test case in B. In a future process step, when the B files are translated to a computer language, all the test files are also translated using the same translator. The set test case has an operation for each test case scenario found during Section \ref{writingPredicates}. Such form allows it to test each test case in a different spot and makes it possible for the user to check when a failure is detected. Those operations call the operation under test with the inputs and create a auxiliary variable for storing and checking the values after the call. If the values are the same as expected, then the verdict ``true'' is returned, otherwise, the verdict is ``false''. Figure \ref{fig:SetTestModel} shows how the concrete set test operations are constructed. \marginpar{As figuras são bastante grandes, alguma solução para diminuí-las?}
 
 % \begin{figure}
 %     \centering
@@ -423,7 +423,7 @@ Once the B component for setting is written, our tool prepares another component
 %     \end{minipage}
 % \end{figure}
 
-In the BTestBox usual process, the next step is the translation of the code by a B compiler. While using a B translator, it is necessary to create a main file - BTestBox has the ability to write this piece of code. Finally, the code is translated, but it is not available for execution. Our tool also asks for a compiler, defined by the user, to create an executable file of the test. With the program of the test, it is possible to show the results of the execution in a new window for the user.
+\marginpar{Descrevendo o processo, e porquê é necessario criar um main, talvez essa explicação possa sair.}In the BTestBox usual process, the next step is the translation of the code by a B compiler. While using a B translator, it is necessary to create a main file - BTestBox has the ability to write this piece of code. Finally, the code is translated, but it is not available for execution. Our tool also asks for a compiler, defined by the user, to create an executable file of the test. With the program of the test, it is possible to show the results of the execution in a new window for the user.
 
 But that is not all: BTestBox also writes an HTML file that provides a summary of the test. It has three sections: The first page, Figure \ref{fig:report1}, shows the tested operations and the test results with the percentage of coverage; the second page, Figure \ref{fig:report2}, contains the inputs and expected outputs for every test, it also reports which objective was not successfully achieved; the third page, \ref{fig:report3}, presents the library with the links for all files used in the test: original files, test files, and translated files. 
 
@@ -507,7 +507,7 @@ Moreover, our tool was not implemented for the data structures of matrices and t
 \end{tabular}
 \end{table}
 
-Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM \cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
+\marginpar{Acho que esse parágrafo pode ser simplificado.}Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM \cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
 
 %For the scalability tests, was used a computer with the operating system Windows 10 64 bits, with a processor Intel Core i5\-6300HQ 2300 GHz and 8 GB de memória RAM. We observed that the scalability may stick to minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree file necessary for BTestBox.
 We \textcolor{blue}{initially} used a computer with the Windows 10 64 bits operating system, with an Intel Core i56300HQ 2300 GHz processor and 8 GB of RAM for the scalability tests. %We observed that the scalability might stick to a minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree files which are required for BTestBox.
@@ -518,7 +518,7 @@ This way, BTestBox can execute its procedure to various operations of the same i
 All examples of table \ref{tab:escalabilidadeSuper} can be executed in a cloud computer costing less than one US dollar.
 
 
-Additionally, the implementation provided in \cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
+\marginpar{Pode ser excluido?}Additionally, the implementation provided in \cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
 
 During the process of testing, it is notorious that the time for evaluation is longer than the other steps of BTestBox. The results are shown in Table \ref{tab:escalabilidade}. It is possible to observe the amount of time spent for the evaluation with ProB.
 
