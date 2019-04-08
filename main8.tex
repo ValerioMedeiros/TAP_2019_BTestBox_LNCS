@@ -116,7 +116,7 @@ Thus, this method has been used for many researches, over many years, in the dev
 
 \begin{figure*}[ht]
     \centering
-    \includegraphics[width = \textwidth,natwidth=1240,natheight=513]{imagens/BMethodBTestBoxColor.png}
+    \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
     \caption{Overview of the B process with the BTestBox process.}
     \label{fig:Bmethod}
 \end{figure*}
@@ -151,20 +151,24 @@ In this section, we present the BTestBox methodology and the background needed t
 
 \subsection{Path Generation}
 
-This section describes how BTestBox identifies the paths from a given B implementation. It is based on directed graphs and takes advantage of the B method properties. From the graph definition:
+This section describes how BTestBox identifies the paths from a given B implementation. It is based on directed graphs and takes advantage of the B method properties. 
 
-\begin{itemize}
-    \item An \textit{N} set of nodes.
-    \item An $N_0$ set of initial nodes, where $N_0 \subseteq N$.
-    \item An $N_f$ set of final nodes, where $N_f \subseteq N$.
-    \item An E set of edges, where E is a subset of $N \times N$.
-\end{itemize}
+% From the graph definition:
 
-\marginpar{Talvez alguma coisa dos próximos 6 parágrafos possam ser apagadas}Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets.
+% \begin{itemize}
+%     \item An \textit{N} set of nodes.
+%     \item An $N_0$ set of initial nodes, where $N_0 \subseteq N$.
+%     \item An $N_f$ set of final nodes, where $N_f \subseteq N$.
+%     \item An E set of edges, where E is a subset of $N \times N$.
+% \end{itemize}
 
-Edges are elements that go from one node and reach the other and are written as ($n_i$,$n_j$). This demonstrates that the edge connects the $n_i$ node to $n_j$.
+% 
 
-A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found at the $E$ set of edges.
+% Edges are elements that go from one node and reach the other and are written as ($n_i$,$n_j$). This demonstrates that the edge connects the $n_i$ node to $n_j$.
+
+% A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found at the $E$ set of edges.
+
+Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets.
 
 For some coverage criteria, it is required that the graph starts at one node and finishes at the other. This is only possible if the nodes are connected by a path. When these coverage criteria are applied in specific graphs, they may produce paths that are impossible to execute. With our tool and the coverage criteria supported by the BTestBox, we can identify these paths and recognise the user's dead codes or useless guard clauses. At the moment, BTestBox supports the following criteria:
 
@@ -236,16 +240,14 @@ Generating a graph and the number of paths does not depend on which coverage cri
 
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
 Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths. However, testing uncountable paths is not mechanically possible.
-To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop just once and uses it to represent all the paths created with the repetition of the loop. We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1}: \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2}: \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3}: \ul{1, 2, 3, 4, 5, 10}.
+To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop once and uses it to represent all the paths created with the repetition of the loop. We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1}: \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2}: \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3}: \ul{1, 2, 3, 4, 5, 10}.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
 
 During this section, we present how BTestBox uses the Hoare’s logic to create a predicate. Our tool relays on the Hoare Triple, with which it is possible to calculate how a command can change the state. 
 This form of the Triple is the notation:
-
-$$\{P\} C \{Q\}$$
-
+\nolinebreak[4] $$\{P\} C \{Q\}$$ \nolinebreak[4]
 \textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. With those terms, it is possible to calculate the precondition by knowing the command and the post-condition. 
 
 For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic. We chose this approach because of the B method property for proved implementations, which implies that a proved implementation always has to finish. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
@@ -255,29 +257,18 @@ For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic
  BTestBox writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
 \marginpar{Talvez alguma coisa da descrição dos predicados possa ser omitida. Essa explicação é bastante grande e ocupa muito espaço, se queremos demonstrar mais os resultados isso talvez possa ser simplificado}The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
-
-$$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0$$
-
-After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, BTestBox first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change:
-
-$$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$$
-
-As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9,8,7. Reaching the sixth node, the triple changes into the following:
-
-$$\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$$
-
-When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is:
-
+\nolinebreak[4] $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0$$ \nolinebreak[4] After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, BTestBox first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$$ \nolinebreak[4]
+As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9,8,7. Reaching the sixth node, the triple changes into the following: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$$ \nolinebreak[4]
+When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is: \nolinebreak[4]
 $$P: \#(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
 $$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
 $$\#(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
-
-Then, BTestBox continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate:
-
+\nolinebreak[4]  Then, BTestBox continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate: \nolinebreak[4]
+\noindent
 $$P: \#(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
 $$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
 $$\#(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$
+$$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$ \nolinebreak[4]
 
 Subsequently, it is necessary to solve the found predicate to assure that it is a valid predicate and has at least one solution. Our tool is not able to solve predicate and retrieve the possible inputs of an operation and its respective output, so we used the ProB constraint solver. The ProB returned that a possible solution is aa = 1, bb = 0, xx = 0, yy = 0, total = 0. That way, the inputs of a test case is defined.
 
@@ -322,7 +313,12 @@ After this procedure, BTestBox found the necessary test cases for achieving the 
 
 
 \subsection{Creating Test Case Files}
-( ) Falta explicar resumidamente
+
+Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, BTestBox creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
+
+The evaluation occurs after the translation using a B compiler, with a compiler provided by the user and supported by our tool, BTestBox can compile and execute the translated code. 
+
+Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives are not reached and a shortcut for all the files used on the test.
 
 \begin{comment}
 
@@ -521,7 +517,7 @@ The current data structures and elements supported are: \textit{Arithmetic opera
 \end{table}
 \end{comment}
 
-\marginpar{Acho que esse parágrafo pode ser simplificado.}Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM \cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
+Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM \cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
 
 %For the scalability tests, was used a computer with the operating system Windows 10 64 bits, with a processor Intel Core i5\-6300HQ 2300 GHz and 8 GB de memória RAM. We observed that the scalability may stick to minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree file necessary for BTestBox.
 We initially used a computer with the Windows 10 64 bits operating system, with an Intel Core i56300HQ 2.300 GHz processor with 4 cores and 8 GB of RAM for the scalability tests. %We observed that the scalability might stick to a minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree files which are required for BTestBox.
@@ -533,7 +529,7 @@ This severally reduce the time for the predicate evaluation. In Table \ref{tab:e
 All examples of table \ref{tab:escalabilidade} can be easily executed in a leased cloud computer costing less than one US dollar with similar results.
 Our experiments have shown that processing time is reduced approximately proportionally when we use a computer with more processing cores.
 
-\marginpar{Pode ser excluido?}Additionally, the implementation provided in \cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
+% \marginpar{Pode ser excluido?}Additionally, the implementation provided in \cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
 
 During the process of testing, it is notorious that the time for evaluation is longer than the other steps of BTestBox. The results are shown in Table \ref{tab:escalabilidade}. It is possible to observe the amount of time spent for the evaluation with ProB.
 

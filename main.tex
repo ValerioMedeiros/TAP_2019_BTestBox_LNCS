@@ -115,7 +115,7 @@ Thus, this method has been used for many researches, over many years, in the dev
 
 \begin{figure*}[ht]
     \centering
-    \includegraphics[width = \textwidth,natwidth=1240,natheight=513]{imagens/BMethodBTestBoxColor.png}
+    \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
     \caption{Overview of the B process with the BTestBox process.}
     \label{fig:Bmethod}
 \end{figure*}
@@ -348,8 +348,7 @@ The test cases are defined based on the chosen coverage criteria. Different crit
 %       a4=1 AND a5=0 THEN
 %     verdict := TRUE
 %   ELSE verdict := FALSE END
-%   END 
-%  END;
+%   END END;
 %  verdict <-- TEST_2_RussMult =
 %  BEGIN 
 %   SetVarForTestRussMult(0,0,0);
@@ -406,8 +405,7 @@ Once the B component for setting is written, our tool prepares another component
 %       IF a1 = TRUE & a2 = TRUE THEN
 %         verdict := TRUE
 %       ELSE verdict := FALSE END
-%     END
-%   END;
+%     END END;
 %   verdict <-- Test_All =
 %   BEGIN 
 %     VAR v0 IN
