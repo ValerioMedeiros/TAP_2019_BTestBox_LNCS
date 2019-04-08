@@ -14,6 +14,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{verbatim}
+\usepackage{textcomp}
 \captionsetup{compatibility=false}
 \usepackage{hyperref}
 % Used for displaying a sample figure. If possible, figure files should
@@ -112,35 +113,28 @@ generation of test cases from models \cite{dalal1999model}. The proposed tool us
 
 %Using a formal method as B is one technique to guarantee the specification behaviour as the user wants.
 Using a formal method such as B is a technique to assure the behaviour of a specification.
-Thus, this method has been used for many researches, over many years, in the development of critical systems \cite{valerio_thesis:2016}. B is based on the Dijkstra notes \cite{dijkstra1976discipline}; it uses the generalised substitution theory \cite{hoare2002proof} and the abstract machine notation. It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine and with sub-sequential modelling, until a concrete implementation. The goal is to have a proven implementation. However, the B code needs to be translated into binary code. This process can lead to errors and requires more attention. The B process is demonstrated in Figure \ref{fig:Bmethod}.
+Thus, this method has been used for many researches, over many years, in the development of critical systems \cite{valerio_thesis:2016}. B is based on the Dijkstra notes \cite{dijkstra1976discipline}; it uses the generalised substitution theory \cite{hoare2002proof} and the abstract machine notation. It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine and with sub-sequential modelling, until a concrete implementation. The goal is to have a proven implementation. However, the B code needs to be translated into binary code. This process can lead to errors and requires more attention. \begin{comment} The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
-\begin{figure*}[ht]
+\begin{figure*}
     \centering
     \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
     \caption{Overview of the B process with the BTestBox process.}
     \label{fig:Bmethod}
 \end{figure*}
+\end{comment}
 
 Translators are used to perform the conversion from B representation to another computer language such as C, ADA, and LLVM. Each translator can translate a subset of B, called B0. Moreover, a translator can have specific restrictions. %Such restrictions are not well documented and may confuse the user. 
 Additionally, compilers can insert bugs even with the correct source code \cite{leroy2009formal}, and the code generators used with B demand additional safety criteria because they are employed in critical systems.
 
 Testing techniques may supplement formal methods during the verification and validation process. They are used for an in-depth verification of the system. The formal methods are limited, and the use of software testing can quickly identify failures and expose defects introduced during the development of the concrete phase or the maintenance of the code \cite{ernesto_thesis:2016}. Also, some certificates such as DO-178B, required by the Federal Aviation Administration (FAA), demand the use of software testing and measuring coverage over the code.
 
-The BTestBox may be used as an Atelier-B extension and, from its interface, can automatically test B specifications. Our tool - BTestBox - receives, as input, a B implementation, the target translator (and profile needed for it to run), one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB)\footnote{ProB is an animator, constraint solver and model checker for B models \cite{1_leuschel_2017}.} directory. Then, the BTestBox generates the test cases to cover the criterion in B, so that the models are translated and executed in the target language. Next, they are compared with the expected values and finally reported. In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
+The BTestBox may be used as an Atelier-B extension and, from its interface, can automatically test B specifications. Our tool - BTestBox - receives, as input, a B implementation, the target translator (and profile needed for it to run), one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB)\footnote{ProB is an animator, constraint solver and model checker for B models \cite{1_leuschel_2017}.} directory. Then, the BTestBox generates the test cases to cover the criterion in B, so that the models are translated and executed in the target language. Next, they are compared with the expected values and finally reported. %In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
 
 In the current state, BTestBox is fully automatic and capable of testing translations from B implementations to C, thus indicating if there is an error in the translation and reporting the coverage rate for the following criteria: Statement Coverage, Clause Coverage, Path Coverage, Branch Coverage, and Combinatorial Coverage. 
 %Each coverage has its functionality such as: identifying dead code with Code Coverage; logic tautology with functional coverages (Path and Branch coverage); and analysing the program flow with different logic decisions (Clause Coverage and MC/DC). 
-The tool and the results of an evaluation with the B language are presented in this paper. The contributions of BTestBox are the following:
-
-
-
-
-\begin{itemize}
-    \item Avoiding the waste of time with the construction of manual test cases by supplying a full automatic model-based process for generation of executable supported criteria test cases for B implementations.% \textcolor{red}{ }
+The tool and the results of an evaluation with the B language are presented in this paper. The contributions of BTestBox are two. Avoiding the waste of time with the construction of manual test cases by supplying a full automatic model-based process for generation of executable supported criteria test cases for B implementations.% \textcolor{red}{ }
     %Ajudar no processo de verificação, pois ajudar a encontrar contra exemplos de entrada na especificação.
-    \item Verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, it helps to find dead code and unnecessary conditions.
-    %Consequentemente isso ajuda a encontrar código morto, codições desnecessárias
-\end{itemize}
+Verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, it helps to find dead code and unnecessary conditions.
 
 This article is organised as follows: %Section \ref{sec:BMethod} gives a brief terminology used in our work. 
 Section \ref{sec:BTestBox} explains the BTestBox methodology, the background needed to understand the BTestBox process, how the tool works, and how it is associated with the B method. Section \ref{sec:Results} shows the results, metrics, threats, and limitations of our tool. Section \ref{sec:RelatedWork} describes the related work. Section \ref{sec:Conclusion} presents the conclusions and the future work.
@@ -168,17 +162,7 @@ This section describes how BTestBox identifies the paths from a given B implemen
 
 % A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found at the $E$ set of edges.
 
-Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets.
-
-For some coverage criteria, it is required that the graph starts at one node and finishes at the other. This is only possible if the nodes are connected by a path. When these coverage criteria are applied in specific graphs, they may produce paths that are impossible to execute. With our tool and the coverage criteria supported by the BTestBox, we can identify these paths and recognise the user's dead codes or useless guard clauses. At the moment, BTestBox supports the following criteria:
-
-\begin{itemize}
-    \item Statement Coverage (ST): Criterion in which every command of the code shall be executed at least once \cite{ammann2008introduction}.
-    \item Branch Coverage (BC): To achieve this criterion, it is necessary to reach every branch in the control flow graph \cite{ammann2008introduction}.
-    \item Path Coverage (PC): It is necessary to reach all different paths in the control flow graph to achieve this coverage \cite{ammann2008introduction}.
-    \item Clause Coverage (CC): Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once \cite{ammann2003coverage}.
-    \item Combinatorial Coverage (CoC): Given a predicate, each possible combination of the clauses shall be evaluated \cite{ammann2003coverage}.
-\end{itemize}
+Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets. For some coverage criteria, it is required that the graph starts at one node and finishes at the other. This is only possible if the nodes are connected by a path. When these coverage criteria are applied in specific graphs, they may produce paths that are impossible to execute. With our tool and the coverage criteria supported by the BTestBox, we can identify these paths and recognise the user's dead codes or useless guard clauses. At the moment, BTestBox supports the following criterias. \textit{Statement Coverage} (ST): Criterion in which every command of the code shall be executed at least once \cite{ammann2008introduction}. \textit{Branch Coverage} (BC): To achieve this criterion, it is necessary to reach every branch in the control flow graph \cite{ammann2008introduction}. \textit{Path Coverage} (PC): It is necessary to reach all different paths in the control flow graph to achieve this coverage \cite{ammann2008introduction}. \textit{Clause Coverage} (CC): Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once \cite{ammann2003coverage}. \textit{Combinatorial Coverage} (CoC): Given a predicate, each possible combination of the clauses shall be evaluated \cite{ammann2003coverage}.
 
 Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. Given the B implementation found in Figure \ref{fig:russianMultImp} and its ``RussMult'' operation, BTestBox can draw the graph shown in Figure \ref{fig:russianMultGraph}.
 
@@ -217,7 +201,7 @@ Generating a graph and the number of paths does not depend on which coverage cri
 % \label{fig:russianMultGraph}
 % \end{figure}
 
-\begin{figure*}[ht]
+\begin{figure*}
 \begin{minipage}{0.54\textwidth}
 \begin{subfigure}{\textwidth}
 \centering
@@ -246,8 +230,7 @@ To bypass this situation, our tool does not compute all the paths. Instead of re
 \subsection{Writing Predicates} \label{writingPredicates}
 
 During this section, we present how BTestBox uses the Hoare’s logic to create a predicate. Our tool relays on the Hoare Triple, with which it is possible to calculate how a command can change the state. 
-This form of the Triple is the notation:
-\nolinebreak[4] $$\{P\} C \{Q\}$$ \nolinebreak[4]
+This form of the Triple is the notation:\noindent \nolinebreak[4] $$\{P\} C \{Q\}$$ \nolinebreak[4] \noindent
 \textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. With those terms, it is possible to calculate the precondition by knowing the command and the post-condition. 
 
 For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic. We chose this approach because of the B method property for proved implementations, which implies that a proved implementation always has to finish. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
@@ -260,14 +243,14 @@ For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic
 \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0$$ \nolinebreak[4] After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, BTestBox first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$$ \nolinebreak[4]
 As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9,8,7. Reaching the sixth node, the triple changes into the following: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$$ \nolinebreak[4]
 When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is: \nolinebreak[4]
-$$P: \#(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
+$$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
 $$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\#(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
+$$\exists(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
 \nolinebreak[4]  Then, BTestBox continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate: \nolinebreak[4]
 \noindent
-$$P: \#(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
+$$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
 $$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\#(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
+$$\exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
 $$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$ \nolinebreak[4]
 
 Subsequently, it is necessary to solve the found predicate to assure that it is a valid predicate and has at least one solution. Our tool is not able to solve predicate and retrieve the possible inputs of an operation and its respective output, so we used the ProB constraint solver. The ProB returned that a possible solution is aa = 1, bb = 0, xx = 0, yy = 0, total = 0. That way, the inputs of a test case is defined.
@@ -281,9 +264,9 @@ Writing a predicate and evaluating the outputs with the same process previously 
 
 BTestBox continues the process. It does the same for paths 1 and 2. Similarly, the predicate for the inputs of the second path is:
 
-$$P: \#(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge$$
+$$P: \exists(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge$$
 $$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\#(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
+$$\exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
 $$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$
 
 The next step is to call ProB and solve the predicate. The returned values for the inputs of the second path are aa = 2, bb = 0, xx = 0, yy = 0, total = 0. Identically, the outputs of path 2 are foo\_aa = 2, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0.
@@ -485,18 +468,18 @@ The groups of diverse components executed by our tool are presented below. The g
 
 \begin{itemize}
     %\item The clause group exercises the structures sees, extends, constants, constraints, imports, promotes, sets, variables, and local operations. Those elements are put in test in groups and separately to observe the changes in the predicate that each can perform.
-    \item The "Clauses" group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
+    \item The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
     %\item Operation calls employ the operation calls in different contexts.
-    \item The "Operation Call" with 26 examples employs operation calls in different contexts.
+    \item The ``Operation Call'' with 26 examples employs operation calls in different contexts.
     %\item Depth blocks are sensitive to the instructions if-else, case, skip, while and assignment. They are grouped and nested to max depth of three. 
-    \item "Depth" blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
+    \item The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
     %\item The industrial project is responsible for diverse contributions to BTestBox, with B structures non previous tested. Unfortunately, the tests generated for this case are very time consuming due the necessity of sets expansions.
-    \item The "Industrial" project with one big example is responsible for different contributions to the BTestBox, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
+    \item The ``Industrial'' project with one big example is responsible for different contributions to the BTestBox, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
 \end{itemize}
 
 All the presented implementation, excluding the industrial project, were exercised with all the coverage criteria supported by the BTestBox. Even contributing to the development of our tool, the industrial project was not able to fully test the project because of the time available.
 
-Moreover, our tool was not implemented for the data structures of matrices and trees. In the current context, BTestBox can manipulate vectors. %The current data structures and elements supported may be observed in Table \ref{tab:tabelaSuportados}.
+Moreover, our tool was not implemented for the data structures of matrices and trees. 
 The current data structures and elements supported are: \textit{Arithmetic operators}; \textit{Logical operators};  \textit{Sets operators} and \textit{Vectors}.
 
 \begin{comment}
@@ -607,7 +590,7 @@ When considering the evaluation of the predicate, BTestBox inherits every limita
 Since BTestBox uses B translators, if the translator has any limitation to B language, it is also applied to our tool. However, there are several B translators, and the BTestBox's approach is compatible with all of them, because the generated tests are also represented in B. 
 
 Significant improvements were developed in the tool offering excellent results.
-The parallelization techniques applied reduced the process time and extended the power to generate tests for larger samples. We also adjusted small configurations on the tool to run on a remote computer with more processor cores. Those improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple’s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
+The parallelization techniques applied reduced the process time and extended the power to generate tests for larger samples. We also adjusted small configurations on the tool to run on a remote computer with more processor cores. Those improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple\textquotesingle s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
 
 The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
 
