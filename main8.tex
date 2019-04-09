@@ -75,29 +75,25 @@ Clearsy System Engineering, France\\
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-Formal software design processes based on refinement include steps
-such as source code analysis and code generation, which are usually
-out of the scope of the formal argument of correctness.
-To mitigate the risk of introducing errors in these phases,
+The argument of correctness in refinement-based formal software design often disregards source code analysis and code generation.
+To mitigate the risk of errors in these phases,
 certifications of regulation entities demand or recommend testing the
-generated software, using some code coverage criteria (e.g., MC/DC
-coverage for DO-178C, which is well demanded in the aeronautical
-industry).
+generated software using some code coverage criteria.
 We propose improvements over BTestBox, a tool for automatic generation
 of tests for software components developed with the B method.
-BTestBox supports several code coverage criteria and applies to code
+BTestBox supports several code coverage criteria and code
 generators for different languages.
 The tool uses a constraint solver to produce tests, being able to
 identify dead code and tautological branching conditions.
 It also generates reports with different metrics and may be used as an
-extension to the Atelier B (an IDE developed by ClearSy, used to write
+extension to the Atelier B (an IDE used to write
 software for critical safety systems).
 Our tool performs a double task: first, it acts on the B model, by
 checking code coverage.
 In a second moment, the tool performs the translation of lower level B
 specifications into programming language code, runs tests and compares
 their results with the expected output of the test cases.
-The present version of BTestBox uses parallelization techniques that
+The present version of BTestBox uses parallelisation techniques that
 significantly improve its performance.
 The results presented here are encouraging, showing performance
 numbers that are one order of magnitude better than for the previous
@@ -113,69 +109,101 @@ version of the tool.
 
 \section{Introduction}
 
-Creating software using the B method \cite{abrial2005b} follows a production flow that goes from an abstract model to the code translated into the target language. 
-%Compatible compilers used to translate the code are not dependable, compilers' errors may silently introduce bugs from correct source code \cite{leroy2009formal}.
-Since the compatible compilers used to translate the code are not dependable, compiler errors may silently introduce bugs from the correct source code \cite{leroy2009formal}.
-Thus, BTestBox is being developed as a solution to test the translated code and to assure that the translation is performed well. Additionally, it may help the verification process to find counterexamples.
-Model-based testing (MBT) provides an approach for the automatic
-generation of test cases from models \cite{dalal1999model}. The proposed tool uses MBT and seeks to satisfy code coverage criteria.
+The B method of software development~\cite{abrial2005b} produces source code by the successive refinement from an abstract model. 
+%Compatible compilers used to translate the code are not dependable, compilers' errors may silently introduce bugs from correct source code~\cite{leroy2009formal}.
+Since compilers are, in general, not dependable, compiler errors may silently introduce bugs to correct source code~\cite{leroy2009formal}.
+BTestBox tests the translated code and assures dependability of the translation. 
+Additionally, BTestBox may help the verification process to find counterexamples.
+Model-based testing (MBT) provides an approach for the automatic generation of test cases from models~\cite{dalal1999model}. 
+Our tool uses MBT and seeks to satisfy several code coverage criteria.
 
 %Using a formal method as B is one technique to guarantee the specification behaviour as the user wants.
-Using a formal method such as B is a technique to assure the behaviour of a specification.
-Thus, this method has been used for many researches, over many years, in the development of critical systems \cite{valerio_thesis:2016}. B is based on the Dijkstra notes \cite{dijkstra1976discipline}; it uses the generalised substitution theory \cite{hoare2002proof} and the abstract machine notation. It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine and with sub-sequential modelling, until a concrete implementation. The goal is to have a proven implementation. However, the B code needs to be translated into binary code. This process can lead to errors and requires more attention. \begin{comment} The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
-\begin{figure*}
-    \centering
-    \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
-    \caption{Overview of the B process with the BTestBox process.}
-    \label{fig:Bmethod}
-\end{figure*}
-\end{comment}
+Formal methods such as B have been used to assure the behaviour of a specification in many contexts over the years, mostly in the development of critical systems~\cite{leuschel:2005,valerio_thesis:2016}. 
+B is based on the Dijkstra notes~\cite{dijkstra1976discipline}; it uses the generalised substitution theory~\cite{hoare2002proof} and an abstract machine notation. 
+It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine that is successively refined to a concrete implementation. 
+The goal is to have a proven implementation. 
+The B code needs to be translated into binary code.
+This process can lead to errors and requires more attention. 
 
-Translators are used to perform the conversion from B representation to another computer language such as C, ADA, and LLVM. Each translator can translate a subset of B, called B0. Moreover, a translator can have specific restrictions. %Such restrictions are not well documented and may confuse the user. 
-Additionally, compilers can insert bugs even with the correct source code \cite{leroy2009formal}, and the code generators used with B demand additional safety criteria because they are employed in critical systems.
+% \begin{comment} The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
-Testing techniques may supplement formal methods during the verification and validation process. They are used for an in-depth verification of the system. The formal methods are limited, and the use of software testing can quickly identify failures and expose defects introduced during the development of the concrete phase or the maintenance of the code \cite{ernesto_thesis:2016}. Also, some certificates such as DO-178B, required by the Federal Aviation Administration (FAA), demand the use of software testing and measuring coverage over the code.
+% \begin{figure*}
+%     \centering
+%     \includegraphics[width = \textwidth]{imagens/BMethodBTestBoxColor.png}
+%     \caption{Overview of the B process with the BTestBox process.}
+%     \label{fig:Bmethod}
+% \end{figure*}
+% \end{comment}
 
-The BTestBox may be used as an Atelier-B extension and, from its interface, can automatically test B specifications. Our tool - BTestBox - receives, as input, a B implementation, the target translator (and profile needed for it to run), one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB  \cite{1_leuschel_2017}) %\footnote{ProB is an animator, constraint solver and model checker for B models \cite{1_leuschel_2017}.}
-directory. Then, the BTestBox generates the test cases to cover the criterion in B, so that the models are translated and executed in the target language. Next, they are compared with the expected values and finally reported. %In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
+There exist translators to perform the conversion from B to a computer language such as C, ADA, and LLVM~\cite{deharbebtestbox}. 
+Each of these translators takes a core subset of B as input language. 
+%Moreover, a translator can have specific restrictions. %Such restrictions are not well documented and may confuse the user. 
+%Additionally, compilers can insert bugs even with the correct source code~\cite{leroy2009formal}, and the code generators used with B demand additional safety criteria because they are employed in critical systems.
 
-In the current state, BTestBox is fully automatic and capable of testing translations from B implementations to C, thus indicating if there is an error in the translation and reporting the coverage rate for the following criteria: Statement Coverage, Clause Coverage, Path Coverage, Branch Coverage, and Combinatorial Coverage. 
+Testing techniques may supplement formal methods during the verification and validation process. 
+They are used for an in-depth verification of the system. 
+Software testing can quickly identify failures and expose defects introduced during code generation and code maintenance~\cite{deharbebtestbox}. 
+Also, some certificates such as DO-178B, required by the Federal Aviation Administration (FAA), demand the use of software testing and measuring coverage over the code.
+
+BTestBox may be used as an Atelier-B extension to automatically test B specifications. 
+Our tool receives as input a B implementation, the target translator, one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB ~\cite{1_leuschel_2017}) %\footnote{ProB is an animator, constraint solver and model checker for B models~\cite{1_leuschel_2017}.}
+directory. 
+Then, BTestBox generates test cases to cover the criterion.
+The test cases are written in B, so that the models are translated and executed in any target language. 
+Next, the results are compared with the expected values, producing a report. 
+%In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
+
+In its current state, BTestBox is fully automatic and capable of testing translations from B implementations to C, checking for errors in the translation and reporting coverage rates for a number of criteria. 
 %Each coverage has its functionality such as: identifying dead code with Code Coverage; logic tautology with functional coverages (Path and Branch coverage); and analysing the program flow with different logic decisions (Clause Coverage and MC/DC). 
-The tool and the results of an evaluation with the B language are presented in this paper. The contributions of BTestBox are two. Avoiding the waste of time with the construction of manual test cases by supplying a full automatic model-based process for generation of executable supported criteria test cases for B implementations.% \textcolor{red}{ }
-    %Ajudar no processo de verificação, pois ajudar a encontrar contra exemplos de entrada na especificação.
-Verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, it helps to find dead code and unnecessary conditions.
+%The tool and the results of an evaluation with the B language are presented in this paper. 
+The two main contributions of BTestBox are: 
+\textit{(i)} Supplying a full automatic model-based process for generation of executable criteria test cases for B implementations, thus avoiding the manual  construction of test cases; and
+\textit{(ii)} Verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, it helps to find dead code and unnecessary conditions.
 
-This article is organised as follows: %Section \ref{sec:BMethod} gives a brief terminology used in our work. 
-Section \ref{sec:BTestBox} explains the BTestBox methodology, the background needed to understand the BTestBox process, how the tool works, and how it is associated with the B method. Section \ref{sec:Results} shows the results, metrics, threats, and limitations of our tool. Section \ref{sec:RelatedWork} describes the related work. Section \ref{sec:Conclusion} presents the conclusions and the future work.
+This article is organised as follows: 
+Section \ref{sec:BTestBox} explains the BTestBox methodology, the background needed to understand the BTestBox process, how the tool works, and how it is associated with the B method. 
+Section \ref{sec:Results} shows the results, metrics, threats, and limitations of our tool. 
+Section \ref{sec:RelatedWork} describes the related work. 
+Section \ref{sec:Conclusion} presents the conclusions and the future work.
 
 \section{Methodology} \label{sec:BTestBox}
 
-In this section, we present the BTestBox methodology and the background needed to understand the process. Our tool tries to confirm the reliability of the B translator while executing the translated code with generated test cases to verify one coverage criterion. To accomplish this objective, BTestBox takes one B implementation and tries to find test cases where one coverage criterion, chosen by the user, shall be achieved. To create the test cases, BTestBox draws the execution flow of a given implementation and uses Hoare's Logic to write a predicate which comprises the possible values for running a path of the flow. Then, it is evaluated and, if one possible solution is found, the values of the input and output will be stored. The creation of test cases continues until the execution of the paths achieves the coverage criteria or until all the paths generated a test case and the criteria was not achieved. Our tool prepares components capable of executing and checking the execution of the test cases after the translation. Finally, the test components are translated and executed, and the metrics are reported.
+We present the BTestBox methodology and the background needed to understand the process. 
+Our tool tries to confirm the reliability of the B translator while executing the translated code with generated test cases to verify one coverage criterion.
+BTestBox takes one B implementation and tries to find test cases where one coverage criterion, chosen by the user, shall be achieved. 
+To create the test cases, BTestBox generates a control flow graph and uses Hoare's Logic to write a predicate which comprises the possible values for the execution paths, according to the chosen criterion. 
+Then, the predicates are evaluated and the values of the input and output are stored for each valid solution. 
+Our tool prepares components capable of executing and checking the execution of the test cases after the translation. Finally, the test components are translated and executed, and the metrics are reported.
 
 \subsection{Path Generation}
 
-This section describes how BTestBox identifies the paths from a given B implementation. It is based on directed graphs and takes advantage of the B method properties. 
+This section describes how BTestBox identifies the paths from a given B implementation. 
+The process uses directed graphs and takes advantage of the B method properties. 
+Edges of the graph are written as ($n_i$,$n_j$).
+A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found in the $E$ set of edges.
 
-% From the graph definition:
+Since B operations have one entry and one exit points, the control flow graphs have one start and one final node.
+Different coverage criteria demand specific conditions to be attended by the control flow graph.
+%Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets. 
+% For some coverage criteria, it is required that the graph starts at one node and finishes at the other.
+% This is only possible if the nodes are connected by a path. 
+% When these coverage criteria are applied to specific graphs, they may produce paths that are impossible to execute. 
+For each coverage criteria supported by BTestBox, the tool can identify these conditions and possibly recognise dead code or useless guard clauses. 
+BTestBox supports the following criteria~\cite{ammann2008introduction}:
+\textit{Statement Coverage} (ST); 
+%: Criterion in which every command of the code shall be executed at least once~\cite{ammann2008introduction}. //
+\textit{Branch Coverage} (BC);
+%: To achieve this criterion, it is necessary to reach every branch in the control flow graph~\cite{ammann2008introduction}.//
+\textit{Path Coverage} (PC);
+%: It is necessary to reach all different paths in the control flow graph to achieve this coverage~\cite{ammann2008introduction}.//
+\textit{Clause Coverage} (CC);
+%: Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once~\cite{ammann2003coverage}. //
+\textit{Combinatorial Coverage} (CoC).
+%: Given a predicate, each possible combination of the clauses shall be evaluated~\cite{ammann2003coverage}.
 
-% \begin{itemize}
-%     \item An \textit{N} set of nodes.
-%     \item An $N_0$ set of initial nodes, where $N_0 \subseteq N$.
-%     \item An $N_f$ set of final nodes, where $N_f \subseteq N$.
-%     \item An E set of edges, where E is a subset of $N \times N$.
-% \end{itemize}
-
-% 
-
-% Edges are elements that go from one node and reach the other and are written as ($n_i$,$n_j$). This demonstrates that the edge connects the $n_i$ node to $n_j$.
-
-% A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found at the $E$ set of edges.
-
-Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets. For some coverage criteria, it is required that the graph starts at one node and finishes at the other. This is only possible if the nodes are connected by a path. When these coverage criteria are applied in specific graphs, they may produce paths that are impossible to execute. With our tool and the coverage criteria supported by the BTestBox, we can identify these paths and recognise the user's dead codes or useless guard clauses. At the moment, BTestBox supports the following criterias. \textit{Statement Coverage} (ST): Criterion in which every command of the code shall be executed at least once \cite{ammann2008introduction}. \textit{Branch Coverage} (BC): To achieve this criterion, it is necessary to reach every branch in the control flow graph \cite{ammann2008introduction}. \textit{Path Coverage} (PC): It is necessary to reach all different paths in the control flow graph to achieve this coverage \cite{ammann2008introduction}. \textit{Clause Coverage} (CC): Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once \cite{ammann2003coverage}. \textit{Combinatorial Coverage} (CoC): Given a predicate, each possible combination of the clauses shall be evaluated \cite{ammann2003coverage}.
-
-Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. Given the B implementation found in Figure \ref{fig:russianMultImp} and its ``RussMult'' operation, BTestBox can draw the graph shown in Figure \ref{fig:russianMultGraph}.
-
+Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. 
+Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:russianMultImp}), BTestBox draws the graph shown in Figure \ref{fig:russianMultGraph}.
 % \begin{figure}[ht]
 %         \centering
 %         \begin{minipage}{0.58\textwidth}
@@ -199,7 +227,7 @@ Generating a graph and the number of paths does not depend on which coverage cri
 %   END
 % END
 %                 \end{minted}
-%         \caption{Implementation of Russian multiplication. \cite{schneider2001b}}
+%         \caption{Implementation of Russian multiplication.~\cite{schneider2001b}}
 %         \label{fig:russianMultImp}
 %     \end{minipage}%
 % \end{figure}
@@ -210,14 +238,13 @@ Generating a graph and the number of paths does not depend on which coverage cri
 % \caption{Graph of the operation ``RussMult''.}
 % \label{fig:russianMultGraph}
 % \end{figure}
-
 \begin{figure*}
 \begin{minipage}{0.54\textwidth}
 \begin{subfigure}{\textwidth}
 \centering
 
 \includegraphics[width = \textwidth]{imagens/russianMult_i2.png}
-\caption{Implementation. \cite{schneider2001b}}
+\caption{Implementation.~\cite{schneider2001b}}
 \label{fig:russianMultImp}
 \end{subfigure}
 \end{minipage}
@@ -231,10 +258,11 @@ Generating a graph and the number of paths does not depend on which coverage cri
 \end{minipage}
 \caption{Russia Multiplication Graph and Implementation.}
 \end{figure*}
-
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
-Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths. However, testing uncountable paths is not mechanically possible.
-To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop once and uses it to represent all the paths created with the repetition of the loop. We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
+Since the operation has a loop, it is possible to identify infinite paths. 
+%However, testing uncountable paths is not mechanically possible.
+To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop once and uses them to represent all the paths created with the repetition of the loop. 
+We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
@@ -325,9 +353,7 @@ After this procedure, BTestBox found the necessary test cases for achieving the 
 
 Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, BTestBox creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
 
-The evaluation occurs after the translation using a B compiler, with a compiler provided by the user and supported by our tool, BTestBox can compile and execute the translated code. 
-
-Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives are not reached and a shortcut for all the files used on the test.
+The evaluation occurs after the translation using a B compiler, with a compiler provided by the user and supported by our tool, BTestBox can compile and execute the translated code. Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives are not reached and a shortcut for all the files used on the test.
 
 \begin{comment}
 
@@ -526,7 +552,7 @@ The current data structures and elements supported are: \textit{Arithmetic opera
 \end{table}
 \end{comment}
 
-Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM \cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
+Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of BTestBox. To present that, giant B implementations were analysed and metrics were registered. A variety of lexical elements of the B language were created at random with nested instructions. They were designed to test the scalability of a B translator to LLVM~\cite{deharbebtestbox}. Those files may be classified by the size of the operations: the variables that define the generation of the files are the number of nesting in command block and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
 
 %For the scalability tests, was used a computer with the operating system Windows 10 64 bits, with a processor Intel Core i5\-6300HQ 2300 GHz and 8 GB de memória RAM. We observed that the scalability may stick to minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree file necessary for BTestBox.
 We initially used a computer with the Windows 10 64 bits operating system, with an Intel Core i56300HQ 2.300 GHz processor with 4 cores and 8 GB of RAM for the scalability tests. %We observed that the scalability might stick to a minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree files which are required for BTestBox.
@@ -538,7 +564,7 @@ This severally reduce the time for the predicate evaluation. In Table \ref{tab:e
 All examples of table \ref{tab:escalabilidade} can be easily executed in a leased cloud computer costing less than one US dollar with similar results.
 Our experiments have shown that processing time is reduced approximately proportionally when we use a computer with more processing cores.
 
-% \marginpar{Pode ser excluido?}Additionally, the implementation provided in \cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
+% \marginpar{Pode ser excluido?}Additionally, the implementation provided in~\cite{deharbebtestbox} had to be adapted to be properly used with BTestBox, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
 
 During the process of testing, it is notorious that the time for evaluation is longer than the other steps of BTestBox. The results are shown in Table \ref{tab:escalabilidade}. It is possible to observe the amount of time spent for the evaluation with ProB.
 
@@ -598,16 +624,16 @@ Currently, BTestBox is only able to test the C compiler, the C4B with different 
 
 \section{Related Work} \label{sec:RelatedWork}
 %\marginpar{Um grande diferencial do BTestBox em relação as outras ferramentas está na capacidade de gerar testes para cinco diferentes critérios de cobertura. Isso amplia as configurações de testes e pode ser melhor explorado no texto.}
-Generating test cases from models is a subject that has been studied by research groups for several years. The work \cite{shafique2010systematic} contains an interesting systematic review about testing a software system by using a test model of its behaviour, and it was useful to BTestBox. Another important work is in \cite{marinescu:2015}. Its authors showed a new overview of the current state of the art for model-based testing tools that use requirement-based specification languages. They quoted two tools compatible with the B method: ProTest \cite{leuschel:2005} and BZ-TT \cite{bouquet:2002}.
+Generating test cases from models is a subject that has been studied by research groups for several years. The work~\cite{shafique2010systematic} contains an interesting systematic review about testing a software system by using a test model of its behaviour, and it was useful to BTestBox. Another important work is in~\cite{marinescu:2015}. Its authors showed a new overview of the current state of the art for model-based testing tools that use requirement-based specification languages. They quoted two tools compatible with the B method: ProTest~\cite{leuschel:2005} and BZ-TT~\cite{bouquet:2002}.
 
 The BZ-TT contains an environment for boundary-value test generation from Z and B specifications. This tool relies on constraint solving, and its goal is to test every operation of the system at every reachable boundary state. A boundary state is a system state in which at least one of the state variables has a maximum or minimum boundary value. It is not open source, and its last public news was in the year of 2003.
 
 ProB is another tool with support to generate tests from B models. It has an automatic test environment for B specifications and a component called ProTest.
-Its component uses model-checking techniques to find test sequences that satisfy its test generation parameters. The user has to define the requirements to be satisfied by the test cases. These requirements are operations that must be covered and predicates that must hold true at the end of each test case. The tool only generates abstract test cases that have to be implemented before they can be executed. BTestBox is capable of generating executable test scripts. That is an advantage. Another recent contribution to this research field is the BETA tool \cite{ernesto_thesis:2016}. 
+Its component uses model-checking techniques to find test sequences that satisfy its test generation parameters. The user has to define the requirements to be satisfied by the test cases. These requirements are operations that must be covered and predicates that must hold true at the end of each test case. The tool only generates abstract test cases that have to be implemented before they can be executed. BTestBox is capable of generating executable test scripts. That is an advantage. Another recent contribution to this research field is the BETA tool~\cite{ernesto_thesis:2016}. 
 
 The BETA generates test code using input space partitioning and logical coverage criteria. It also automates the generation tests and supports several coverage criteria. The generated tests are based on abstract B models, and some important information about the model are ignored.
 Information ignored by BETA may generate inaccurate tests related to the B concrete model. Differently, BTestBox generates test cases directly from B concrete model which is a closer representation of the software.
-Another relevant difference is that BETA is focused on unit testing, while BTestBox tests both approaches on unit testing and the entire module. Furthermore, BTestBox has previous experiments with massive and random tests \cite{deharbebtestbox}.
+Another relevant difference is that BETA is focused on unit testing, while BTestBox tests both approaches on unit testing and the entire module. Furthermore, BTestBox has previous experiments with massive and random tests~\cite{deharbebtestbox}.
 
 \section{Conclusions and Future Work} \label{sec:Conclusion}
 
@@ -629,7 +655,7 @@ Since BTestBox uses B translators, if the translator has any limitation to B lan
 Significant improvements were developed in the tool offering excellent results.
 The parallelization techniques applied reduced the process time and extended the power to generate tests for larger samples. We also adjusted small configurations on the tool to run on a remote computer with more processor cores. Those improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple\textquotesingle s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
 
-The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
+%The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
 
 %\section*{Acknowledgement}
 %  The authors would like to especially thank ClearSy System Engineering for providing the industrial case and support. The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions. The work is supported by the Federal Institute of the Rio Grande do Norte, the Federal University of Rio Grande do Norte and CAPES (Coordination of Improvement of Higher Level Personnel).
