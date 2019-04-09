@@ -35,23 +35,32 @@
 \author{Diego de Azevedo Oliveira \inst{1} \and %\orcidID{0000-1111-2222-3333} \and
 Val{\'e}rio Medeiros Jr\inst{2}\orcidID{0000-0001-6255-5026} \and
 David D{\'e}harbe\inst{3}\and %\orcidID{2222--3333-4444-5555} \and
-Martin A. Musicante \inst{4}\orcidID{0000-0001-5589-3895}
+Martin A. Musicante \inst{1}\orcidID{0000-0001-5589-3895}
 }
 %
 \authorrunning{D. Azevedo et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 
-\institute{Université de Sherbrooke, Canada\\
-\email{diegodeazevedooliveira@gmail.com}
+% \institute{Universit{\'e} de Sherbrooke, Canada\\
+% \email{diegodeazevedooliveira@gmail.com}
+% \and
+% Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
+% \email{valerio.medeiros@ifrn.edu.br} \and
+% Clearsy System Engineering, France\\
+% \email{david.deharbe@clearsy.com}
+% \and
+% Universidade Federal do Rio Grande do Norte, Brazil\\
+% \email{mam@dimap.ufrn.br}}
+
+\institute{Universidade Federal do Rio Grande do Norte, Brazil\\
+\email{diegodeazevedooliveira@gmail.com}, \email{mam@dimap.ufrn.br}
 \and
 Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
 \email{valerio.medeiros@ifrn.edu.br} \and
 Clearsy System Engineering, France\\
-\email{david.deharbe@clearsy.com}
-\and
-Universidade Federal do Rio Grande do Norte, Brazil\\
-\email{mam@dimap.ufrn.br}}
+\email{david.deharbe@clearsy.com}}
+
 
 %\institute{Université de Sherbrooke, Canada \and
 %Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
@@ -128,7 +137,8 @@ Additionally, compilers can insert bugs even with the correct source code \cite{
 
 Testing techniques may supplement formal methods during the verification and validation process. They are used for an in-depth verification of the system. The formal methods are limited, and the use of software testing can quickly identify failures and expose defects introduced during the development of the concrete phase or the maintenance of the code \cite{ernesto_thesis:2016}. Also, some certificates such as DO-178B, required by the Federal Aviation Administration (FAA), demand the use of software testing and measuring coverage over the code.
 
-The BTestBox may be used as an Atelier-B extension and, from its interface, can automatically test B specifications. Our tool - BTestBox - receives, as input, a B implementation, the target translator (and profile needed for it to run), one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB)\footnote{ProB is an animator, constraint solver and model checker for B models \cite{1_leuschel_2017}.} directory. Then, the BTestBox generates the test cases to cover the criterion in B, so that the models are translated and executed in the target language. Next, they are compared with the expected values and finally reported. %In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
+The BTestBox may be used as an Atelier-B extension and, from its interface, can automatically test B specifications. Our tool - BTestBox - receives, as input, a B implementation, the target translator (and profile needed for it to run), one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB  \cite{1_leuschel_2017}) %\footnote{ProB is an animator, constraint solver and model checker for B models \cite{1_leuschel_2017}.}
+directory. Then, the BTestBox generates the test cases to cover the criterion in B, so that the models are translated and executed in the target language. Next, they are compared with the expected values and finally reported. %In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
 
 In the current state, BTestBox is fully automatic and capable of testing translations from B implementations to C, thus indicating if there is an error in the translation and reporting the coverage rate for the following criteria: Statement Coverage, Clause Coverage, Path Coverage, Branch Coverage, and Combinatorial Coverage. 
 %Each coverage has its functionality such as: identifying dead code with Code Coverage; logic tautology with functional coverages (Path and Branch coverage); and analysing the program flow with different logic decisions (Clause Coverage and MC/DC). 
@@ -224,13 +234,15 @@ Generating a graph and the number of paths does not depend on which coverage cri
 
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
 Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths. However, testing uncountable paths is not mechanically possible.
-To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop once and uses it to represent all the paths created with the repetition of the loop. We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1}: \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2}: \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3}: \ul{1, 2, 3, 4, 5, 10}.
+To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, BTestBox counts the paths inside the loop once and uses it to represent all the paths created with the repetition of the loop. We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
 
-During this section, we present how BTestBox uses the Hoare’s logic to create a predicate. Our tool relays on the Hoare Triple, with which it is possible to calculate how a command can change the state. 
-This form of the Triple is the notation:\noindent \nolinebreak[4] $$\{P\} C \{Q\}$$ \nolinebreak[4] \noindent
+During this section, we present how BTestBox uses the Hoare\textquotesingle s logic to create a predicate. Our tool relays on the Hoare Triple, with which it is possible to calculate how a command can change the state. 
+This form of the Triple is the notation: \nolinebreak[4]
+\noindent $${\displaystyle \{P\} C \{Q\} }$$ \nolinebreak[4]
+\noindent. 
 \textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. With those terms, it is possible to calculate the precondition by knowing the command and the post-condition. 
 
 For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic. We chose this approach because of the B method property for proved implementations, which implies that a proved implementation always has to finish. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
@@ -239,36 +251,50 @@ For writing the predicate, BTestBox does a bottom-up approach with Hoare's Logic
 
  BTestBox writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
-\marginpar{Talvez alguma coisa da descrição dos predicados possa ser omitida. Essa explicação é bastante grande e ocupa muito espaço, se queremos demonstrar mais os resultados isso talvez possa ser simplificado}The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
-\nolinebreak[4] $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0$$ \nolinebreak[4] After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, BTestBox first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$$ \nolinebreak[4]
-As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9,8,7. Reaching the sixth node, the triple changes into the following: \nolinebreak[4] $$\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$$ \nolinebreak[4]
-When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is: \nolinebreak[4]
-$$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
-$$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\exists(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
-\nolinebreak[4]  Then, BTestBox continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate: \nolinebreak[4]
+The BTestBox procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
+\nolinebreak[4]
 \noindent
-$$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge$$
-$$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$ \nolinebreak[4]
-
+$$ {\displaystyle \{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 } $$ 
+\noindent \nolinebreak[4]
+After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, BTestBox first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change: \nolinebreak[4]
+\noindent $$ {\displaystyle \{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true } $$ \nolinebreak[4]
+\noindent
+As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9,8,7. Reaching the sixth node, the triple changes into the following: \nolinebreak[4]
+\noindent $$ {\displaystyle \{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1 }$$ \nolinebreak[4]
+\noindent
+When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is: \nolinebreak[4]
+\noindent
+$${\displaystyle P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge 
+ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) }$$
+$${\displaystyle \wedge \  \exists(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)}$$
+\nolinebreak[4]
+\noindent
+Then, BTestBox continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate: \nolinebreak[4]
+\noindent
+$$ {\displaystyle P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge
+ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)  }$$
+$$ {\displaystyle \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge}$$
+$$ {\displaystyle xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT}$$ \noindent \nolinebreak[4]
 Subsequently, it is necessary to solve the found predicate to assure that it is a valid predicate and has at least one solution. Our tool is not able to solve predicate and retrieve the possible inputs of an operation and its respective output, so we used the ProB constraint solver. The ProB returned that a possible solution is aa = 1, bb = 0, xx = 0, yy = 0, total = 0. That way, the inputs of a test case is defined.
 
 Getting the outputs is a similar process, but instead of the post-condition of the end node being true, its foo variables equals each input variable. Then:
-
-$$Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge$$
-$$foo\_yy = yy \wedge foo\_total = total$$
-
+\nolinebreak[4]
+\noindent
+$${\displaystyle Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge
+foo\_yy = yy \wedge foo\_total = total }$$
+\nolinebreak[4]
+\noindent
 Writing a predicate and evaluating the outputs with the same process previously done returns the values foo\_aa = 1, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0. Finally, one test case is defined with the inputs and the expected outputs.
 
 BTestBox continues the process. It does the same for paths 1 and 2. Similarly, the predicate for the inputs of the second path is:
-
-$$P: \exists(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge$$
-$$ xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$\exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-$$xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$
-
+\nolinebreak[4]
+\noindent
+$${\displaystyle P: \exists(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge }$$
+$${\displaystyle xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge }$$
+$${\displaystyle \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge }$$
+$${\displaystyle xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT} $$
+\nolinebreak[4]
+\noindent
 The next step is to call ProB and solve the predicate. The returned values for the inputs of the second path are aa = 2, bb = 0, xx = 0, yy = 0, total = 0. Identically, the outputs of path 2 are foo\_aa = 2, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0.
 
 %After this procedure, BTestBox found the necessary test cases for achieving BC for the operation ``RussMult''. And they are shown in the table \ref{tab:TestCases}.
@@ -277,7 +303,7 @@ After this procedure, BTestBox found the necessary test cases for achieving the 
 %shown in Table \ref{tab:TestCases}.
 
 \begin{comment}
-\begin{table}[h]
+\begin{table}
 \centering
 \caption{Test cases for ``RussMult''}
 \begin{tabular}{c|c|c|c|c|}
@@ -483,7 +509,7 @@ Moreover, our tool was not implemented for the data structures of matrices and t
 The current data structures and elements supported are: \textit{Arithmetic operators}; \textit{Logical operators};  \textit{Sets operators} and \textit{Vectors}.
 
 \begin{comment}
-\begin{table}[h]
+\begin{table}
 \centering
 \caption{Structures supported by BTestBox}
 \label{tab:tabelaSuportados}
@@ -516,19 +542,32 @@ Our experiments have shown that processing time is reduced approximately proport
 
 During the process of testing, it is notorious that the time for evaluation is longer than the other steps of BTestBox. The results are shown in Table \ref{tab:escalabilidade}. It is possible to observe the amount of time spent for the evaluation with ProB.
 
+% \begin{table}[h!]
+% \centering
+% \caption{Implementations for scalability}
+% \label{tab:escalabilidade}
+% \begin{tabular}{|c|c|c|c|}
+% \hline
+% Component                                                                                          & COMP\_1seq1 & COMP\_2seq1 & COMP\_3seq1 \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Quantity of\\ operations\end{tabular}                                    & 39          & 199         & 999         \\ \hline
+% %Nesting level                                                                                          & 1           & 2           & 3           \\ \hline
+% %\begin{tabular}[c]{@{}c@{}}Commands\\ by block\end{tabular}                                         & 1           & 1           & 1           \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Execution time\\ with 4 cores\\ (seconds)\end{tabular}                       & 587      & 3102      & 18214     \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Execution time\\ with 20 cores\\ (seconds)\end{tabular}                       & 38     & 176     & 2286   \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Time reduced\\ for evaluation\end{tabular}            & 93\%     & 94\%     & 87\%     \\ \hline
+% \end{tabular}
+% \end{table}
+
 \begin{table}[h!]
 \centering
 \caption{Implementations for scalability}
 \label{tab:escalabilidade}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-Component                                                                                          & COMP\_1seq1 & COMP\_2seq1 & COMP\_3seq1 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Quantity of\\ operations\end{tabular}                                    & 39          & 199         & 999         \\ \hline
-%Nesting level                                                                                          & 1           & 2           & 3           \\ \hline
-%\begin{tabular}[c]{@{}c@{}}Commands\\ by block\end{tabular}                                         & 1           & 1           & 1           \\ \hline
-\begin{tabular}[c]{@{}c@{}}Execution time\\ with 4 cores\\ (seconds)\end{tabular}                       & 587      & 3102      & 18214     \\ \hline
-\begin{tabular}[c]{@{}c@{}}Execution time\\ with 20 cores\\ (seconds)\end{tabular}                       & 38     & 176     & 2286   \\ \hline
-\begin{tabular}[c]{@{}c@{}}Time reduced\\ for evaluation\end{tabular}            & 93\%     & 94\%     & 87\%     \\ \hline
+Component   & \begin{tabular}[c]{@{}c@{}}Quantity of \\ operations\end{tabular} & \begin{tabular}[c]{@{}c@{}}Execution time \\ with 4 cores\end{tabular} & \begin{tabular}[c]{@{}c@{}}Execution time \\ with 20 cores\end{tabular} & \begin{tabular}[c]{@{}c@{}}Reduced time\\ for evaluation\end{tabular} \\ \hline
+COMP\_1seq1 & 39                                                                & 587 seconds                                                            & 38 seconds                                                              & 93\%                                                                  \\ \hline
+COMP\_2seq1 & 199                                                               & 3102 seconds                                                           & 176 seconds                                                             & 94\%                                                                  \\ \hline
+COMP\_3seq1 & 999                                                               & 18214 seconds                                                          & 2286 seconds                                                            & 87\%                                                                  \\ \hline
 \end{tabular}
 \end{table}
 
@@ -558,10 +597,8 @@ Currently, BTestBox is only able to test the C compiler, the C4B with different 
 %%To address these potential threats, more studies will be expanded by the authors using a bigger range of models and a more powerful computer, reducing the time of tests and expanding the quantity number of models tested by BTestBox.
 
 \section{Related Work} \label{sec:RelatedWork}
-\marginpar{Um grande diferencial do BTestBox em relação as outras ferramentas está na capacidade de gerar testes para cinco diferentes critérios de cobertura. Isso amplia as configurações de testes e pode ser melhor explorado no texto.}
-Generating test cases from models is a subject that has been studied by research groups for several years. The work \cite{shafique2010systematic} contains an interesting systematic review about testing a software system by using a test model of its behaviour, and it was useful to BTestBox.
-
-Another important work is in \cite{marinescu:2015}. Its authors showed a new overview of the current state of the art for model-based testing tools that use requirement-based specification languages. They quoted two tools compatible with the B method: ProTest \cite{leuschel:2005} and BZ-TT \cite{bouquet:2002}.
+%\marginpar{Um grande diferencial do BTestBox em relação as outras ferramentas está na capacidade de gerar testes para cinco diferentes critérios de cobertura. Isso amplia as configurações de testes e pode ser melhor explorado no texto.}
+Generating test cases from models is a subject that has been studied by research groups for several years. The work \cite{shafique2010systematic} contains an interesting systematic review about testing a software system by using a test model of its behaviour, and it was useful to BTestBox. Another important work is in \cite{marinescu:2015}. Its authors showed a new overview of the current state of the art for model-based testing tools that use requirement-based specification languages. They quoted two tools compatible with the B method: ProTest \cite{leuschel:2005} and BZ-TT \cite{bouquet:2002}.
 
 The BZ-TT contains an environment for boundary-value test generation from Z and B specifications. This tool relies on constraint solving, and its goal is to test every operation of the system at every reachable boundary state. A boundary state is a system state in which at least one of the state variables has a maximum or minimum boundary value. It is not open source, and its last public news was in the year of 2003.
 
@@ -583,7 +620,7 @@ Several components were created with different B structures to test the function
 
 BTestBox is already capable of generating tests that verify MC/DC. Our tool is capable of generating tests to verify the Combinatorial Coverage, since it demands the test of all possible combinations of guards, achieving CoC implies in being successful at MC/DC. Unfortunately, CoC generates a high number of tests. Efforts are concentrated in developing an approach to generate fewer test cases and achieve the required coverage.
 
-BTestBox's future research has to be towards improving the performance. This is a problem since it calls ProB and sometimes the model checker has to expand a big set or various sets. The time to run a predicate with many clauses is enormous in comparison with predicates without any expansion. To solve this, the predicate generated by BTestBox has to be simplified with only the conditions that are bound to the variables that are used in operation.
+BTestBox\textquotesingle s future research has to be towards improving the performance. This is a problem since it calls ProB and sometimes the model checker has to expand a big set or various sets. The time to run a predicate with many clauses is enormous in comparison with predicates without any expansion. To solve this, the predicate generated by BTestBox has to be simplified with only the conditions that are bound to the variables that are used in operation.
 
 When considering the evaluation of the predicate, BTestBox inherits every limitation from the logic expression solver (ProB). There are other candidate solvers that help to minimise the restrictions, and they will be studied.
 
