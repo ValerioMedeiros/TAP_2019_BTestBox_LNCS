@@ -255,76 +255,120 @@ Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:r
 \caption{Russia Multiplication Graph and Implementation.}
 \end{figure*}
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
-Since the operation has a loop, the graph is cyclic, and contains infinite paths (even though such paths do not correspond to possible executions of the operation). 
+Since the operation has a loop, the graph is cyclic, and contains potentially infinite paths (even though only finite paths are allowed, due to the terminating nature of the model). 
 %However, testing uncountable paths is not mechanically possible.
 Instead of repeating the instructions inside the loop and generating different paths for each execution of the loop, \textit{BTestBox} computes the paths inside the loop once and uses them to represent all the paths created with the repetition of the loop. 
-We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
+We assume this because of the B method termination property - a loop always has to end.
+For our example, \textit{BTestbox} generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
+These paths corresponds to the control flow of the operation inside the graph. The numbers represent nodes of the graph.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
 
-This section presents how \textit{BTestBox} uses Hoare\textquotesingle s logic to create a predicate. Our tool relies on Hoare triples to ccompute how a command changes the state. It has the notation: $\{P\} C \{Q\}$, where
-\textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. The precondition may be computed from the command and the post-condition. 
+This section presents how \textit{BTestBox} uses Hoare's logic to create test conditions. 
+Our tool relies on Hoare triples to compute how a command changes the state. 
+We use the notation: $\{P\} C \{Q\}$, where
+\textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. 
+\textit{P} and \textit{Q} are states described by first-order logic formul\ae. 
+The precondition may be computed from the command and post-condition. 
 
-For writing the predicate, \textit{BTestBox} applies Hoare's logic rules bottom-up. This approach is safeguarded by termination property ensured by the B method. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
+To obtain a precondition, \textit{BTestBox} applies Hoare's logic rules backwards, which is possible due to the termination property ensured by the B method. 
+%Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
 
 %In order to generate the test cases, \textit{BTestBox} writes the predicate related to each previous generated path of the model under test or until the chosen criteria is achieved. Even more, different criterion has separate goals, for example, with the PC is necessary to test every path and for the operation ``RussMult'' is necessary to test the three. Although, for ST if the path 1 is feasible, then just it need to be executed. Choosing the BC for the operation in the Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
- \textit{BTestBox} writes predicates to generate the test cases. They are related to each previously generated path of the model under test. They remain under testing until the chosen criterion is achieved. Further more, the different criteria have separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
+\textit{BTestBox} generated predicates are used to generate test cases. 
+These predicates are obtained by a backward sweep of the paths defined by the criterion. 
+%They remain under testing until the chosen criterion is achieved. 
+For example, using the PC criterion on the model of Figure~\ref{fig:russianMultImp}, it is necessary to test the three paths defined for the example. 
+Other criteria may have different requirements.
+For instance, if the ST criterion is required, only \textit{path 1} needs to be checked.
+For the BC criterion a minimum of two paths would be executed.
 
-The \textit{BTestBox} procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
-$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $
+In accordance to the test criterion, \textit{BTestBox} takes the longest path to obtain the first predicate to be checked. 
+Given that \textit{Path 1} is chosen, the tool begins with node~10 and will reversely sweep the path.
+Assuming the \textit{true} postcondition for node~10, we have that the triple $\{true\}\ \texttt{END}\ \{true\}$ holds for this node.
 
-% $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $$ 
+In order to obtain the precondition for node~5, we see that it represents a guard, where the expression yields to false.
+This is represented by $[\neg(xx > 0)]$.
+In this case, we obtain the Hoare triple $\{xx \leq 0\}\ [\neg(xx > 0)]\ \{true\}$.
+% ( )TODO: Confirmar com DIego (Formulas cima e baixo iguais?)
+% and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
+% $\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $
 
-After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the inner part of the loop and the other for the outer part. The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, \textit{BTestBox} first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change:
-$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$ 
-% $$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true $$
+% % $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $$ 
 
-As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9, 8 and 7. Reaching the sixth node, the triple changes into the following:
-$\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$ 
-% $$ \{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1 $$ 
+After reaching node 5, since it is the guard of a loop, our tool divides the predicate in two: one partition for the body of the loop and the other one for the code that appears before the loop. 
+For the BC Criterion, we should check that every branch of the graph is visited.
+In this way, commands other than the ones containing guards will not affect the generated conditions.
+In this way, the tool will the backward walk \textit{path~1}, going from node~9 to node~6.
+Supposing that the post-condition of node~9 is \textit{true}, we infer that the post-condition of node~6 is also \textit{true}.
+Node~6 is a guard, which, in this case, is evaluated to \textit{true}.
+In this way we obtain the Hoare triple $\{xx\ mod\ 2=1\}\ [xx\ mod\ 2=1]\ \{true\}$ for node~6.
 
-When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. Finally, the precondition is:
-$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \ \exists(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$ 
-% $$ P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge 
-%  xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
-% $$\wedge \  \exists(xx, yy, total).((xx \leq 0) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)$$
+% Let us consider node~5, using the positive branch of it.
+% For this node, we obtain a Hoare triple reflecting both the condition of the guard itself, as well as the post-condition of the node (which is the calculated precondition of node~6): $\{xx\ mod\ 2=1 \wedge xx>0 \}\ [xx>0]\ \{xx\ mod\ 2=1\}$
 
-Then, \textit{BTestBox} continues to walk through the path, but the quantification cannot be changed by statements that appear after it. Since there are no more guards until node 1, the predicate will remain the same. With node 1, the invariant of the abstract machine ``RussianMult'' and the precondition of the abstract operation are added in the predicate: 
-$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$ 
+
+
+% The inner predicate is a post-condition indicating the values after running the loop and the outer is the previously calculated precondition for entering the loop. 
+% After calculating the inner predicate, both predicates are joined in a bigger predicate representing the post-condition of ending the operation. Then, \textit{BTestBox} first calculates the predicate for the inner part, and the post-condition refreshes to hold true because the loops in B have to reach an end. Differently from node 5, node 9 is not a guard, so it can change the previously established variables, but since it is a new predicate and holds it true, nothing will change:
+% $\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true$ 
+% % $$\{P\} C \{Q\} \implies \{P_i\} yy := yy * 2\{true\} \implies P_i: true $$
+
+% As it is possible to observe, the precondition remains the same as the post-condition. This happens because the variables in the statement do not manipulate the variables inside the post-condition and the command is not a guard. Such an effect occurs in the nodes 9, 8 and 7. Reaching the sixth node, the triple changes into the following:
+% $\{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1$ 
+% % $$ \{P\} C \{Q\} \implies \{P_i\} [xx\ mod\ 2=1]\{true\} \implies P_i: xx\ mod\ 2 = 1 $$ 
+
+%When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. 
+
+The tool proceeds by applying the same reasoning, which, in the case of \textit{path~1} yieds to the following precondition of the \texttt{RussMult} operation:
+
+
+$P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N}$ 
 % $$ P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge
 %  xx \in \mathbb{N} \wedge total + xx * yy = aa * bb)  $$
 % $$ \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-% $$ xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$$
+% $$ xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N}$$
 
-Subsequently, it is necessary to solve the found predicate to assure that it is a valid predicate and has at least one solution. Our tool is not able to solve predicate and retrieve the possible inputs of an operation and its respective output, so we used the \textit{ProB} constraint solver. The \textit{ProB} returned that a possible solution is aa = 1, bb = 0, xx = 0, yy = 0, total = 0. That way, the inputs of a test case is defined.
+In the next step, it is necessary to found if the predicate is verified by at least one solution. 
+Our tool uses the \textit{ProB} constraint solver for find a suitable variable interpretation (if it exists).
+In the case of our example, \textit{ProB} returned that a possible solution is $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$. 
+These values may define the input of a test case.
 
-Getting the outputs is a similar process, but instead of the post-condition of the end node being true, its foo variables equals each input variable. Then:
-$Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge foo\_yy = yy \wedge foo\_total = total$ 
-% $$Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge
-% foo\_yy = yy \wedge foo\_total = total$$
+The expected outputs for the test case are obtained by executing the path. 
+In this case, we obtain $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$.
 
-Writing a predicate and evaluating the outputs with the same process previously done returns the values foo\_aa = 1, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0. Finally, one test case is defined with the inputs and the expected outputs.
+% Getting the outputs is a similar process, but instead of the post-condition of the end node being true, its foo variables equals each input variable. Then:
+% $Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge foo\_yy = yy \wedge foo\_total = total$ 
+% % $$Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge
+% % foo\_yy = yy \wedge foo\_total = total$$
 
-\textit{BTestBox} continues the process. It does the same for paths 1 and 2. Similarly, the predicate for the inputs of the second path is:
-$P : \exists (xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT$ 
-% $$P: \exists(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge $$
-% $$xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
-% $$ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge $$
-% $$ xx : NAT \wedge yy : NAT \wedge total : NAT \wedge aa : NAT \wedge bb : NAT $$
+% Writing a predicate and evalurating the outputs with the same process previously done returns the values foo\_aa = 1, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0. Finally, one test case is defined with the inputs and the expected outputs.
 
-The next step is to call \textit{ProB} and solve the predicate. The returned values for the inputs of the second path are aa = 2, bb = 0, xx = 0, yy = 0, total = 0. Identically, the outputs of path 2 are foo\_aa = 2, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0.
+\textit{BTestBox} continues the process for all the paths required by the criterion.
 
-%After this procedure, \textit{BTestBox} found the necessary test cases for achieving BC for the operation ``RussMult''. And they are shown in the table \ref{tab:TestCases}.
-After this procedure, \textit{BTestBox} found the necessary test cases for achieving the BC criterion for the ``RussMult'' operation, which are: \ul{aa = 1, bb = 0, xx = 0, yy = 0, total = 0 (Case test 1 - Input);  aa = 1, bb = 0, xx = 0, yy = 0, total = 0 (Case test 1 - Output)} and \ul{aa = 2, bb = 0, xx = 0, yy = 0, total = 0 (Case test 2 - Input);  aa = 2, bb = 0, xx = 0, yy = 0, total = 0 (Case test 2 - Output)}. 
+% It does the same for paths 1 and 2. Similarly, the predicate for the inputs of the second path is:
+% $P : \exists (xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N}$ 
+% % $$P: \exists(xx, yy, total).(xx > 0 \wedge \neg(xx\ mod\ 2 = 1) \wedge $$
+% % $$xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
+% % $$ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge $$
+% % $$ xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N} $$
+
+% The next step is to call \textit{ProB} and solve the predicate. The returned values for the inputs of the second path are aa = 2, bb = 0, xx = 0, yy = 0, total = 0. Identically, the outputs of path 2 are foo\_aa = 2, foo\_bb = 0, foo\_xx = 0, foo\_yy = 0, foo\_total = 0.
+
+% %After this procedure, \textit{BTestBox} found the necessary test cases for achieving BC for the operation ``RussMult''. And they are shown in the table \ref{tab:TestCases}.
+
+In the case of the example, this will lead to the following test cases (for the BC Criterion):
+
+
+
+%\ul{aa = 1, bb = 0, xx = 0, yy = 0, total = 0 (Case test 1 - Input);  aa = 1, bb = 0, xx = 0, yy = 0, total = 0 (Case test 1 - Output)} and \ul{aa = 2, bb = 0, xx = 0, yy = 0, total = 0 (Case test 2 - Input);  aa = 2, bb = 0, xx = 0, yy = 0, total = 0 (Case test 2 - Output)}. 
 
 %shown in Table \ref{tab:TestCases}.
 
-\begin{comment}
-\begin{table}
-\centering
-\caption{Test cases for ``RussMult''}
+
+\begin{center}
 \begin{tabular}{c|c|c|c|c|}
 \cline{2-5}
                                 & \multicolumn{2}{c|}{Test 1} & \multicolumn{2}{c|}{Test 2} \\ \hline
@@ -335,9 +379,8 @@ After this procedure, \textit{BTestBox} found the necessary test cases for achie
 \multicolumn{1}{|c|}{yy}        & 0            & 0            & 0            & 0            \\ \hline
 \multicolumn{1}{|c|}{total}     & 0            & 0            & 0            & 0            \\ \hline
 \end{tabular}
-\label{tab:TestCases}
-\end{table}
-\end{comment}
+%\label{tab:TestCases}
+\end{center}
 
 \paragraph{Creating Test Case Files:} Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, \textit{BTestBox} creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
 
@@ -631,7 +674,8 @@ Another relevant difference is that \textit{BETA} is focused on unit testing, wh
 
 Currently, \textit{BTestBox} is a free and open-source tool under Berkeley-licensed software.
 This tool was born from an international collaboration between the academia and the software industry. The collaboration resulted in an initial version of the tool. Now, the goal is to increase the maturity of \textit{BTestBox} to deal with industrial applications.
-The developed software is in continuous development and the tool offers an important contribution to the community.
+The software is in continuous development.
+We believe that the tool offers an important contribution to the community.
 
 Several components were created with different B structures to test the functionality and correctness of the \textit{BTestBox}. More than 120 B concrete models were created to test the B language, and one model, simulating a real used B program, was provided by \textit{ClearSy}. \textit{BTestBox} is already capable of generating tests that verify MC/DC. Our tool is capable of generating tests to verify the Combinatorial Coverage, since it demands the test of all possible combinations of guards, achieving CoC implies in being successful at MC/DC. %Unfortunately, CoC generates a high number of tests. Efforts are concentrated in developing an approach to generate fewer test cases and achieve the required coverage.
 
@@ -641,7 +685,7 @@ Several components were created with different B structures to test the function
 
 Since  \textit{BTestBox} uses B translators, if the translator has any limitation to B language, it is also applied to our tool. However, there are several B translators, and the  \textit{BTestBox}'s approach is compatible with all of them, because the generated tests are also represented in B. 
 
-Significant improvements were developed in the tool offering excellent results.
+Significant improvements were developed in the tool, offering excellent results.
 The parallelization techniques applied reduced the process time and extended the power to generate tests for larger samples. We also adjusted small configurations on the tool to run on a remote computer with more processor cores. Those improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple\textquotesingle s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
 
 %The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
