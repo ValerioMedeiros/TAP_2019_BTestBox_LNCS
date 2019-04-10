@@ -120,12 +120,13 @@ Our tool uses MBT and seeks to satisfy several code coverage criteria.
 %Using a formal method as B is one technique to guarantee the specification behaviour as the user wants.
 
 Formal methods such as B have been used to assure the behaviour of a specification in many contexts over the years, mostly in the development of critical systems~\cite{leuschel:2005,valerio_thesis:2016}. 
-B is based on the Dijkstra notes~\cite{dijkstra1976discipline}; it uses the generalised substitution theory~\cite{hoare2002proof} and an abstract machine notation. 
-It supports a modular modelling:  every component has its own specified module with different levels of abstraction, starting with an abstract machine that is successively refined to a concrete implementation. 
+B is based on the Dijkstra notes~\cite{dijkstra1976discipline}; it uses the generalised substitution theory~\cite{hoare2002proof} and a specific notation. 
+B is modular:  every component has its own specified module with different levels of abstraction, each related by a refinement relation, up to a concrete implementation. 
 The goal is to have a proven implementation. 
-The B code needs to be translated into binary code.
-This process can lead to errors and requires more attention. 
-
+The B code is then translated to binary code.
+This process is not guaranteed by proof and requires more attention. 
+Code generators from B target computer languages such as C, ADA, and LLVM~\cite{deharbebtestbox}. 
+Each such tool takes a core subset of B as input language. 
 % \begin{comment} The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
 % \begin{figure*}
@@ -136,8 +137,7 @@ This process can lead to errors and requires more attention.
 % \end{figure*}
 % \end{comment}
 
-There exist translators to perform the conversion from B to a computer language such as C, ADA, and LLVM~\cite{deharbebtestbox}. 
-Each of these translators takes a core subset of B as input language. 
+
 %Moreover, a translator can have specific restrictions. %Such restrictions are not well documented and may confuse the user. 
 %Additionally, compilers can insert bugs even with the correct source code~\cite{leroy2009formal}, and the code generators used with B demand additional safety criteria because they are employed in critical systems.
 
@@ -169,28 +169,24 @@ Section \ref{sec:Conclusion} presents the conclusions and the future work.
 
 \section{Methodology} \label{sec:BTestBox}
 
-We present the applied methodology and the background needed to understand the process. 
-Our tool tries to confirm the reliability of the B translator while executing the translated code with generated test cases to verify one coverage criterion.
-\textit{BTestBox} takes one B implementation and tries to find test cases where one coverage criterion, chosen by the user, shall be achieved. 
-To create the test cases, \textit{BTestBox} generates a control flow graph and uses Hoare's Logic to write a predicate which comprises the possible values for the execution paths, according to the chosen criterion. 
-Then, the predicates are evaluated and the values of the input and output are stored for each valid solution. 
+This section presents the methodology and the background needed to understand the process. 
+BTestBox generates test cases for the code generated from B subject to a given coverage criterion.
+\textit{BTestBox} takes as input a B implementation and a coverage criterion. 
+To create the test cases, \textit{BTestBox} generates a control flow graph and uses Hoare's Logic to write a predicate characterizing the possible values for the execution paths, according to the chosen criterion. 
+Then, the predicates are evaluated and the values of the input and output parameters are stored for each valid solution. 
 Our tool prepares components capable of executing and checking the execution of the test cases after the translation. Finally, the test components are translated and executed, and the metrics are reported.
 
 \subsection{Path Generation}
 
 This section describes how \textit{BTestBox} identifies the paths from a given B implementation. 
-The process uses directed graphs and takes advantage of the B method properties. 
-Edges of the graph are written as ($n_i$,$n_j$).
-A path of a graph G is a sequence of nodes [$n_1$,$n_2$,\ldots,$n_M$], in which each adjacent pair of nodes ($n_i$, $n_{(i+1)}$), $1 \leq i < M$ is found in the $E$ set of edges.
-
-Since B operations have one entry and one exit points, the control flow graphs have one start and one final node.
-Different coverage criteria demand specific conditions to be attended by the control flow graph.
+The process uses directed graphs and takes advantage of the B method properties. Since B operations have only one entry 
+and only one exit, the control flow graphs have one start node and one final node. Different coverage criteria correspond
+to different set of paths from initial to final node in the graph.
 %Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets. 
 % For some coverage criteria, it is required that the graph starts at one node and finishes at the other.
 % This is only possible if the nodes are connected by a path. 
 % When these coverage criteria are applied to specific graphs, they may produce paths that are impossible to execute. 
-For each coverage criteria supported by \textit{BTestBox}, the tool can identify these conditions and possibly recognise dead code or useless guard clauses. 
-\textit{BTestBox} supports the following criteria~\cite{ammann2008introduction}:
+For each coverage criteria supported by \textit{BTestBox}, the tool can identify these paths. \textit{BTestBox} supports the following criteria~\cite{ammann2008introduction}:
 \textit{Statement Coverage} (ST); 
 %: Criterion in which every command of the code shall be executed at least once~\cite{ammann2008introduction}. //
 \textit{Branch Coverage} (BC);
@@ -201,9 +197,9 @@ For each coverage criteria supported by \textit{BTestBox}, the tool can identify
 %: Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once~\cite{ammann2003coverage}. //
 \textit{Combinatorial Coverage} (CoC).
 %: Given a predicate, each possible combination of the clauses shall be evaluated~\cite{ammann2003coverage}.
+Also \textit{BTextBox} identifies dead code. 
 
-Generating a graph and the number of paths does not depend on which coverage criteria is chosen, but the number of paths needed to be executed depends on the coverage. 
-Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:russianMultImp}), \textit{BTestBox} draws the graph shown in Figure \ref{fig:russianMultGraph}.
+Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:russianMultImp}), \textit{BTestBox} builds the graph shown in Figure \ref{fig:russianMultGraph}.
 % \begin{figure}[ht]
 %         \centering
 %         \begin{minipage}{0.58\textwidth}
@@ -259,25 +255,22 @@ Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:r
 \caption{Russia Multiplication Graph and Implementation.}
 \end{figure*}
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
-Since the operation has a loop, it is possible to identify infinite paths. 
+Since the operation has a loop, the graph is cyclic, and contains infinite paths (even though such paths do not correspond to possible executions of the operation). 
 %However, testing uncountable paths is not mechanically possible.
-To bypass this situation, our tool does not compute all the paths. Instead of repeating the instructions inside the loop and generating different paths for each time the loop is executed, \textit{BTestBox} counts the paths inside the loop once and uses them to represent all the paths created with the repetition of the loop. 
+Instead of repeating the instructions inside the loop and generating different paths for each execution of the loop, \textit{BTestBox} computes the paths inside the loop once and uses them to represent all the paths created with the repetition of the loop. 
 We assume this because of the B method property - a loop always has to end, and this is defined in the clauses of the B method. Then, we define that BTestbox generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
 
-During this section, we present how \textit{BTestBox} uses the Hoare\textquotesingle s logic to create a predicate. Our tool relays on the Hoare Triple, with which it is possible to calculate how a command can change the state. 
-This form of the Triple is the notation: $\{P\} C \{Q\}$
-% $$\{P\} C \{Q\} $$ 
+This section presents how \textit{BTestBox} uses Hoare\textquotesingle s logic to create a predicate. Our tool relies on Hoare triples to ccompute how a command changes the state. It has the notation: $\{P\} C \{Q\}$, where
+\textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. The precondition may be computed from the command and the post-condition. 
 
-\textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. \textit{P} and \textit{Q} are states described in first-order logic. With those terms, it is possible to calculate the precondition by knowing the command and the post-condition. 
-
-For writing the predicate, \textit{BTestBox} does a bottom-up approach with Hoare's Logic. We chose this approach because of the B method property for proved implementations, which implies that a proved implementation always has to finish. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
+For writing the predicate, \textit{BTestBox} applies Hoare's logic rules bottom-up. This approach is safeguarded by termination property ensured by the B method. Since it is possible to assume that the operation is going to end, the post-condition \textit{Q} is assumable true at the last statement ``END'' of a B operation.
 
 %In order to generate the test cases, \textit{BTestBox} writes the predicate related to each previous generated path of the model under test or until the chosen criteria is achieved. Even more, different criterion has separate goals, for example, with the PC is necessary to test every path and for the operation ``RussMult'' is necessary to test the three. Although, for ST if the path 1 is feasible, then just it need to be executed. Choosing the BC for the operation in the Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
- \textit{BTestBox} writes the predicate to generate the test cases. They are related to each previously generated path of the model that are under test. They remain under testing until the chosen criterion is achieved. Further more, the different criterion has separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
+ \textit{BTestBox} writes predicates to generate the test cases. They are related to each previously generated path of the model under test. They remain under testing until the chosen criterion is achieved. Further more, the different criteria have separate goals, for example, with the PC criterion: it is necessary to test every path, and for the ``RussMult'' operation, it is needed to test all the three paths. However, for the ST criterion, if path 1 is feasible, only then, it will be executed. By choosing the BC criterion for the operation in Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
 The \textit{BTestBox} procedure takes the path with the biggest amount of nodes to write the first predicate. Such consideration makes Path 1 the path under test. With the bottom-up approach, node 10 holds true and is the post-condition of the Hoare's Triple. Node 5 is the command. Since it needs to be a false guard, the value is the negative of the hold, generating the following scheme:
 $\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $
@@ -511,16 +504,20 @@ But that is not all: \textit{BTestBox} also writes an HTML file that provides a 
 \end{comment}
 
 
-\begin{itemize}
+%\begin{itemize}
     %\item The clause group exercises the structures sees, extends, constants, constraints, imports, promotes, sets, variables, and local operations. Those elements are put in test in groups and separately to observe the changes in the predicate that each can perform.
-    \item The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
+    $\bullet$ The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
+    
     %\item Operation calls employ the operation calls in different contexts.
-    \item The ``Operation Call'' with 26 examples employs operation calls in different contexts.
+    $\bullet$ The ``Operation Call'' with 26 examples are in different contexts.
+    
     %\item Depth blocks are sensitive to the instructions if-else, case, skip, while and assignment. They are grouped and nested to max depth of three. 
-    \item The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
+    $\bullet$ The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
+    
     %\item The industrial project is responsible for diverse contributions to \textit{BTestBox}, with B structures non previous tested. Unfortunately, the tests generated for this case are very time consuming due the necessity of sets expansions.
-    \item The ``Industrial'' project with one big example is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
-\end{itemize}
+    $\bullet$ The ``Industrial'' project with one big example is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
+    
+
 
 All the presented implementation, excluding the industrial project, were exercised with all the coverage criteria supported by the \textit{BTestBox}. Even contributing to the development of our tool, the industrial project was not able to fully test the project because few data structures are not yet supported: matrices and trees. 
 The current data structures and elements supported are: \textit{Arithmetic operators}; \textit{Logical operators};  \textit{Sets operators} and \textit{Vectors}.
