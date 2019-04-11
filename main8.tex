@@ -77,30 +77,30 @@ Universidade Federal do Rio Grande do Norte, Brazil\\
 \begin{abstract}
 The argument of correctness in refinement-based formal software design often disregards source code analysis and code generation.
 To mitigate the risk of errors in these phases,
-certifications of regulation entities demand or recommend testing the
-generated software using some code coverage criteria.
-We propose improvements over  \textit{BTestBox}, a tool for automatic generation
+certifications issued by regulation entities demand or recommend testing
+the generated software using a code coverage criteria.
+We propose improvements for the  \textit{BTestBox}, a tool for automatic generation
 of tests for software components developed with the B method.
  \textit{BTestBox} supports several code coverage criteria and code
 generators for different languages.
-The tool uses a constraint solver to produce tests, being able to
+The tool uses a constraint solver to produce tests, thus being able to
 identify dead code and tautological branching conditions.
 It also generates reports with different metrics and may be used as an
 extension to the Atelier B (an IDE used to write
 software for critical safety systems).
 Our tool performs a double task: first, it acts on the B model, by
-checking code coverage.
+checking the code coverage.
 In a second moment, the tool performs the translation of lower level B
 specifications into programming language code, runs tests and compares
 their results with the expected output of the test cases.
 The present version of  \textit{BTestBox} uses parallelisation techniques that
 significantly improve its performance.
 The results presented here are encouraging, showing performance
-numbers that are one order of magnitude better than for the previous
-version of the tool.
+numbers that are one order of magnitude better than the ones obtained
+in the tool's previous version..
 
 %\keywords{First keyword  \and Second keyword \and Another keyword.}
-\keywords{Proofs, Model-based testing, Code coverage.}
+\keywords{B Method, Model-based testing, Code coverage.}
 \end{abstract}
 %
 %
@@ -109,7 +109,7 @@ version of the tool.
 
 \section{Introduction}
 
-The B method of software development~\cite{abrial2005b} produces source code by the successive refinement from an abstract model. 
+The B method of software development~\cite{abrial2005b} produces the source code by the successive refinement from an abstract model. 
 %Compatible compilers used to translate the code are not dependable, compilers' errors may silently introduce bugs from correct source code~\cite{leroy2009formal}.
 Since compilers are, in general, not dependable, compiler errors may silently introduce bugs to correct source code~\cite{leroy2009formal}.
  \textit{BTestBox} tests the translated code and assures dependability of the translation. 
@@ -121,12 +121,12 @@ Our tool uses MBT and seeks to satisfy several code coverage criteria.
 
 Formal methods such as B have been used to assure the behaviour of a specification in many contexts over the years, mostly in the development of critical systems~\cite{leuschel:2005,valerio_thesis:2016}. 
 B is based on the Dijkstra notes~\cite{dijkstra1976discipline}; it uses the generalised substitution theory~\cite{hoare2002proof} and a specific notation. 
-B is modular:  every component has its own specified module with different levels of abstraction, each related by a refinement relation, up to a concrete implementation. 
+B is modular:  every component has its own specified module with different levels of abstraction, each of them related by a refinement relation, up to a concrete implementation. 
 The goal is to have a proven implementation. 
 The B code is then translated to binary code.
 This process is not guaranteed by proof and requires more attention. 
 Code generators from B target computer languages such as C, ADA, and LLVM~\cite{deharbebtestbox}. 
-Each such tool takes a core subset of B as input language. 
+Each one of them takes a core subset of B as input language. 
 % \begin{comment} The B process is demonstrated in Figure \ref{fig:Bmethod}.
 
 % \begin{figure*}
@@ -143,23 +143,23 @@ Each such tool takes a core subset of B as input language.
 
 Testing techniques may supplement formal methods during the verification and validation process. 
 They are used for an in-depth verification of the system. 
-Software testing can quickly identify failures and expose defects introduced during code generation and code maintenance~\cite{deharbebtestbox}. 
+Software testing can quickly identify failures and expose defects introduced during the code generation and code maintenance~\cite{deharbebtestbox}. 
 Also, some certificates such as DO-178B, required by the Federal Aviation Administration (FAA), demand the use of software testing and measuring coverage over the code.
 
  \textit{BTestBox} may be used as an Atelier-B extension to automatically test B specifications. 
-Our tool receives as input a B implementation, the target translator, one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB ~\cite{1_leuschel_2017}) %\footnote{ProB is an animator, constraint solver and model checker for B models~\cite{1_leuschel_2017}.}
+Our tool receives as inputs a B implementation, the target translator, one compiler, one coverage criterion, the folder project, and the logic expression solver (ProB ~\cite{1_leuschel_2017}) %\footnote{ProB is an animator, constraint solver and model checker for B models~\cite{1_leuschel_2017}.}
 directory. 
 Then,  \textit{BTestBox} generates test cases to cover the criterion.
-The test cases are written in B, so that the models are translated and executed in any target language. 
-Next, the results are compared with the expected values, producing a report. 
+The test cases are written in B so that the models are translated and executed in any target language. 
+Next, the results are compared with the expected values, thus producing a report. 
 %In Figure \ref{fig:Bmethod} it is possible to observe where our tool fits in the B process.
 
-In its current state,  \textit{BTestBox} is fully automatic and capable of testing translations from B implementations to C, checking for errors in the translation and reporting coverage rates for a number of criteria. 
+In its current state,  \textit{BTestBox} is fully automatic and capable of testing translations from B implementations to C, checking for translation errors and reporting coverage rates for several criteria. 
 %Each coverage has its functionality such as: identifying dead code with Code Coverage; logic tautology with functional coverages (Path and Branch coverage); and analysing the program flow with different logic decisions (Clause Coverage and MC/DC). 
 %The tool and the results of an evaluation with the B language are presented in this paper. 
 The two main contributions of  \textit{BTestBox} are: 
-\textit{(i)} Supplying a full automatic model-based process for generation of executable criteria test cases for B implementations, thus avoiding the manual  construction of test cases; and
-\textit{(ii)} Verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, it helps to find dead code and unnecessary conditions.
+\textit{(i)} supplying a full automatic model-based process for generation of executable criteria test cases for B implementations, thus avoiding the manual  construction of test cases; and
+\textit{(ii)} verifying the correctness of the B compiler while testing the translated code developed with the B formal method process using the supported criteria test cases consequently, thus helping to find dead code and unnecessary conditions.
 
 This article is organised as follows: 
 Section \ref{sec:BTestBox} explains the  \textit{BTestBox} methodology, the background needed to understand the  \textit{BTestBox} process, how the tool works, and how it is associated with the B method. 
@@ -169,19 +169,19 @@ Section \ref{sec:Conclusion} presents the conclusions and the future work.
 
 \section{Methodology} \label{sec:BTestBox}
 
-This section presents the methodology and the background needed to understand the process. 
-BTestBox generates test cases for the code generated from B subject to a given coverage criterion.
-\textit{BTestBox} takes as input a B implementation and a coverage criterion. 
+This Section presents the methodology and the background needed to understand the process. 
+BTestBox generates test cases for the code generated from the B subject to a given coverage criterion.
+It takes as input a B implementation and a coverage criterion. 
 To create the test cases, \textit{BTestBox} generates a control flow graph and uses Hoare's Logic to write a predicate characterizing the possible values for the execution paths, according to the chosen criterion. 
 Then, the predicates are evaluated and the values of the input and output parameters are stored for each valid solution. 
 Our tool prepares components capable of executing and checking the execution of the test cases after the translation. Finally, the test components are translated and executed, and the metrics are reported.
 
 \subsection{Path Generation}
 
-This section describes how \textit{BTestBox} identifies the paths from a given B implementation. 
-The process uses directed graphs and takes advantage of the B method properties. Since B operations have only one entry 
-and only one exit, the control flow graphs have one start node and one final node. Different coverage criteria correspond
-to different set of paths from initial to final node in the graph.
+This Section describes how \textit{BTestBox} identifies the paths from a given B implementation. 
+The process uses directed graphs and takes advantage of the B method's properties. Since B operations have only one entry 
+and only one exit, the control flow graphs have one start node and one end node. Different coverage criteria correspond
+to different set of paths from the initial to the final node in the graph.
 %Since the operations in B can only have one origin and has an end declaration. The initial and final set nodes of the graph for a given B operation are unitary test sets. 
 % For some coverage criteria, it is required that the graph starts at one node and finishes at the other.
 % This is only possible if the nodes are connected by a path. 
@@ -197,9 +197,9 @@ For each coverage criteria supported by \textit{BTestBox}, the tool can identify
 %: Given a predicate, each clause inside the predicate needs to be evaluated as either true or false at least once~\cite{ammann2003coverage}. //
 \textit{Combinatorial Coverage} (CoC).
 %: Given a predicate, each possible combination of the clauses shall be evaluated~\cite{ammann2003coverage}.
-Also \textit{BTextBox} identifies dead code. 
+Also \textit{BTextBox} identifies dead codes. 
 
-Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:russianMultImp}), \textit{BTestBox} builds the graph shown in Figure \ref{fig:russianMultGraph}.
+Given the B implementation of the ``\texttt{RussMult}'' operation (Figure \ref{fig:russianMultImp}), \textit{BTestBox} builds the graph shown in Figure \ref{fig:russianMultGraph}.
 % \begin{figure}[ht]
 %         \centering
 %         \begin{minipage}{0.58\textwidth}
@@ -257,15 +257,15 @@ Given the B implementation of the operation \texttt{RussMult} (Figure \ref{fig:r
 %Since the operation found in Figure \ref{fig:russianMultGraph} has a loop, it is possible to identify infinite paths and uncountable paths to test is not mechanically possible. 
 Since the operation has a loop, the graph is cyclic, and contains potentially infinite paths (even though only finite paths are allowed, due to the terminating nature of the model). 
 %However, testing uncountable paths is not mechanically possible.
-Instead of repeating the instructions inside the loop and generating different paths for each execution of the loop, \textit{BTestBox} computes the paths inside the loop once and uses them to represent all the paths created with the repetition of the loop. 
+Instead of repeating the instructions inside the loop and generating different paths for each execution of the loop, \textit{BTestBox} computes the paths inside the loop once and uses them to represent all the paths created with the loop's repetition. 
 We assume this because of the B method termination property - a loop always has to end.
 For our example, \textit{BTestbox} generates the following paths: \textit{path 1} = \ul{1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 10};  \textit{path 2} = \ul{1, 2, 3, 4, 5, 6, 8, 9, 5, 10} and \textit{path 3} = \ul{1, 2, 3, 4, 5, 10}.
-These paths corresponds to the control flow of the operation inside the graph. The numbers represent nodes of the graph.
+These paths correspond to the control flow of the operation inside the graph. The numbers represent nodes of the graph.
 
 
 \subsection{Writing Predicates} \label{writingPredicates}
 
-This section presents how \textit{BTestBox} uses Hoare's logic to create test conditions. 
+This Section presents how \textit{BTestBox} uses Hoare's logic to create test conditions. 
 Our tool relies on Hoare triples to compute how a command changes the state. 
 We use the notation: $\{P\} C \{Q\}$, where
 \textit{P} represents the precondition for the execution of the command \textit{C}, and \textit{Q} is the post-condition established after the command. 
@@ -277,19 +277,19 @@ To obtain a precondition, \textit{BTestBox} applies Hoare's logic rules backward
 
 %In order to generate the test cases, \textit{BTestBox} writes the predicate related to each previous generated path of the model under test or until the chosen criteria is achieved. Even more, different criterion has separate goals, for example, with the PC is necessary to test every path and for the operation ``RussMult'' is necessary to test the three. Although, for ST if the path 1 is feasible, then just it need to be executed. Choosing the BC for the operation in the Figure \ref{fig:russianMultGraph}, the minimum necessary paths to be executed is two.
 
-\textit{BTestBox} generated predicates are used to generate test cases. 
-These predicates are obtained by a backward sweep of the paths defined by the criterion. 
+The predicates generated by \textit{BTestBox} are used to create test cases. 
+These predicates are obtained through a backward sweep of the paths defined by the criterion. 
 %They remain under testing until the chosen criterion is achieved. 
-For example, using the PC criterion on the model of Figure~\ref{fig:russianMultImp}, it is necessary to test the three paths defined for the example. 
+For example, using the PC criterion on the model shown in Figure~\ref{fig:russianMultImp}, it is necessary to test the three paths defined for the example. 
 Other criteria may have different requirements.
 For instance, if the ST criterion is required, only \textit{path 1} needs to be checked.
-For the BC criterion a minimum of two paths would be executed.
+For the BC criterion, a minimum of two paths would be executed.
 
-In accordance to the test criterion, \textit{BTestBox} takes the longest path to obtain the first predicate to be checked. 
+In accordance with the test criterion, \textit{BTestBox} takes the longest path to obtain the first predicate that will be checked. 
 Given that \textit{Path 1} is chosen, the tool begins with node~10 and will reversely sweep the path.
 Assuming the \textit{true} postcondition for node~10, we have that the triple $\{true\}\ \texttt{END}\ \{true\}$ holds for this node.
 
-In order to obtain the precondition for node~5, we see that it represents a guard, where the expression yields to false.
+To obtain the precondition for node~5, we note that it represents a guard, where the expression yields to false.
 This is represented by $[\neg(xx > 0)]$.
 In this case, we obtain the Hoare triple $\{xx \leq 0\}\ [\neg(xx > 0)]\ \{true\}$.
 % ( )TODO: Confirmar com DIego (Formulas cima e baixo iguais?)
@@ -298,13 +298,13 @@ In this case, we obtain the Hoare triple $\{xx \leq 0\}\ [\neg(xx > 0)]\ \{true\
 
 % % $$\{P\} C \{Q\} \implies \{P\} [\neg(xx > 0)] \{true\} \implies P: xx <= 0 $$ 
 
-After reaching node 5, since it is the guard of a loop, our tool divides the predicate in two: one partition for the body of the loop and the other one for the code that appears before the loop. 
-For the BC Criterion, we should check that every branch of the graph is visited.
-In this way, commands other than the ones containing guards will not affect the generated conditions.
-In this way, the tool will the backward walk \textit{path~1}, going from node~9 to node~6.
+After reaching node 5, since it is the guard of a loop, our tool divides the predicate into two: one partition for the body of the loop and the other one for the code that appears before the loop. 
+For the BC Criterion, we should make sure that every branch of the graph is visited.
+This way, commands other than the ones containing guards will not affect the generated conditions.
+Therefore, the tool will take the backward walk through \textit{path~1}, going from node~9 to node~6.
 Supposing that the post-condition of node~9 is \textit{true}, we infer that the post-condition of node~6 is also \textit{true}.
 Node~6 is a guard, which, in this case, is evaluated to \textit{true}.
-In this way we obtain the Hoare triple $\{xx\ mod\ 2=1\}\ [xx\ mod\ 2=1]\ \{true\}$ for node~6.
+This way we obtain the Hoare triple $\{xx\ mod\ 2=1\}\ [xx\ mod\ 2=1]\ \{true\}$ for node~6.
 
 % Let us consider node~5, using the positive branch of it.
 % For this node, we obtain a Hoare triple reflecting both the condition of the guard itself, as well as the post-condition of the node (which is the calculated precondition of node~6): $\{xx\ mod\ 2=1 \wedge xx>0 \}\ [xx>0]\ \{xx\ mod\ 2=1\}$
@@ -322,7 +322,7 @@ In this way we obtain the Hoare triple $\{xx\ mod\ 2=1\}\ [xx\ mod\ 2=1]\ \{true
 
 %When arriving at the guard of the loop, our tool joins the external and the internal calculated predicates. Therefore, it also assumes a quantification over the values that are modified inside the loop. And due to the B declarations, it wraps the values of the variables in the quantification over the invariant. This assures that the assumed values satisfy the proved B implementation. 
 
-The tool proceeds by applying the same reasoning, which, in the case of \textit{path~1} yieds to the following precondition of the \texttt{RussMult} operation:
+The tool proceeds by continuing to apply the same reasoning which, in the case of \textit{path~1}, yields to the following precondition of the ``\texttt{RussMult}'' operation:
 
 
 $P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N}$ 
@@ -331,13 +331,13 @@ $P: \exists(xx, yy, total).(xx > 0 \wedge xx\ mod\ 2 = 1 \wedge xx \in \mathbb{N
 % $$ \wedge \ \exists(xx, yy, total).(xx \leq 0 \wedge xx \in \mathbb{N} \wedge total + xx * yy = aa * bb) \wedge$$
 % $$ xx : \mathbb{N} \wedge yy : \mathbb{N} \wedge total : \mathbb{N} \wedge aa : \mathbb{N} \wedge bb : \mathbb{N}$$
 
-In the next step, it is necessary to found if the predicate is verified by at least one solution. 
+In the next step, it is necessary to find if the predicate is verified by at least one solution. 
 Our tool uses the \textit{ProB} constraint solver for find a suitable variable interpretation (if it exists).
-In the case of our example, \textit{ProB} returned that a possible solution is $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$. 
+In our example, \textit{ProB} returned that a possible solution is $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$. 
 These values may define the input of a test case.
 
 The expected outputs for the test case are obtained by executing the path. 
-In this case, we obtain $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$.
+In this case, the values obtained $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$.
 
 % Getting the outputs is a similar process, but instead of the post-condition of the end node being true, its foo variables equals each input variable. Then:
 % $Q : foo\_aa = aa \wedge foo\_bb = bb \wedge foo\_xx = xx \wedge foo\_yy = yy \wedge foo\_total = total$ 
@@ -359,7 +359,7 @@ In this case, we obtain $aa = 1$, $bb = 0$, $xx = 0$, $yy = 0$, $total = 0$.
 
 % %After this procedure, \textit{BTestBox} found the necessary test cases for achieving BC for the operation ``RussMult''. And they are shown in the table \ref{tab:TestCases}.
 
-In the case of the example, this will lead to the following test cases (for the BC Criterion):
+In this example, it will lead to the following test cases (for the BC Criterion):
 
 
 
@@ -384,16 +384,16 @@ In the case of the example, this will lead to the following test cases (for the 
 
 \subsection{Creating Test Case Files}
 
-Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, \textit{BTestBox} creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
+Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, comparing the results and reporting them to the user. To do all of this, \textit{BTestBox} creates copies of the user's files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the test case files.
 
-The evaluation occurs after the translation using a B compiler, with a compiler provided by the user and supported by our tool, \textit{BTestBox} can compile and execute the translated code. Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives are not reached and a shortcut for all the files used on the test.
+The evaluation occurs after the translation is performed using a B compiler. With a compiler provided by the user and supported by our tool, \textit{BTestBox} can compile and execute the translated code. Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives were not reached and offering a shortcut for all the files used on the test.
 
 \begin{comment}
 
 \subsection{Creating Test Case Files}
 
 
-\marginpar{Talvez os 3 primeiros parágrafos possam ser modificados, acho que principalmente o segundo paragrafo}In this section, we describe how \textit{BTestBox} can manipulate the user files, insert ```get'' and ``set'' operations, and execute the test with the previously calculated inputs. 
+In this Section, we describe how \textit{BTestBox} can manipulate the user files, insert ```get'' and ``set'' operations, and execute the test with the previously calculated inputs. 
 
 Our tool copies the user files to keep the original B components and adds operations capable of changing the state of the variables. The ``set'' operation is responsible for setting the input values of variables that are defined and not used in the operation call. For the Russian multiplication implementation, the variables are xx, yy, and total. The ``get'' operations are responsible of providing the current state of each variable on the component. Every variable has a different ``get'' operation. Writing them to the model under test allows the \textit{BTestBox} to check the state of the variables and it compares with the expected output that was previously calculated.
 
@@ -527,7 +527,7 @@ But that is not all: \textit{BTestBox} also writes an HTML file that provides a 
 
 %This section is responsible for discussing the results, the validation, and the potential improvements.
 
-\textit{BTestBox} was tested for a variety of different B clauses and structures, with the goal of assuring the correctness of the process and the functionality of the tool. Our tool ran more than 120 proved implementations. Additionally, one real B project granted by the \textit{ClearSy} enterprise was put under test. The groups of diverse components executed by our tool are presented below. The groups were divided regarding the language structure exercised with the B component.
+\textit{BTestBox} was tested for a variety of different B clauses and structures, with the goal of assuring the correctness of the process and the functionality of the tool. Our tool ran more than 120 proved implementations. Additionally, one real B project granted by the \textit{ClearSy} enterprise was put under test. The groups of diverse components executed by our tool are presented below. The groups were divided considering the language structure exercised with the B component.
 
 \begin{comment}
 \begin{table}[ht]
@@ -551,21 +551,21 @@ But that is not all: \textit{BTestBox} also writes an HTML file that provides a 
 
 \begin{itemize}
     %\item The clause group exercises the structures sees, extends, constants, constraints, imports, promotes, sets, variables, and local operations. Those elements are put in test in groups and separately to observe the changes in the predicate that each can perform.
-    \item The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
+    \item The ``Clauses'' group, with 14 examples, exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. These elements are tested both in groups and separately. The tests observe the changes that each element can perform in the predicate.
     
-    %\item Operation calls employ the operation calls in different contexts.
-    \item The ``Operation Call'' with 26 examples are in different contexts.
+    %\item Operation calls employ the operation calls in different contexts. 
+    \item The ``Operation Call'' group, with 26 examples in different contexts.
     
     %\item Depth blocks are sensitive to the instructions if-else, case, skip, while and assignment. They are grouped and nested to max depth of three. 
-    \item The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
+    \item The ``Depth blocks'' group, with 89 examples, is sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
     
     %\item The industrial project is responsible for diverse contributions to \textit{BTestBox}, with B structures non previous tested. Unfortunately, the tests generated for this case are very time consuming due the necessity of sets expansions.
-    \item The ``Industrial'' project with one big example is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
+    \item The ``Industrial project'' group, with one big example, is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
 \end{itemize}
 
 
-All the presented implementation, excluding the industrial project, were exercised with all the coverage criteria supported by the \textit{BTestBox}. Even contributing to the development of our tool, the industrial project was not able to fully test the project because few data structures are not yet supported: matrices and trees. 
-The current data structures and elements supported are: \textit{Arithmetic operators}; \textit{Logical operators};  \textit{Sets operators} and \textit{Vectors}.
+All the presented implementation, excluding the ``Industrial project'', were performed with all the coverage criteria supported by the \textit{BTestBox}. Even contributing to the development of our tool, the industrial project was not able to fully test it because some data structures, such as matrices and trees, are not yet supported. 
+The current data structures and elements supported are: \textit{arithmetic operators}; \textit{logical operators};  \textit{sets operators} and \textit{vectors}.
 
 \begin{comment}
 \begin{table}
@@ -585,18 +585,19 @@ The current data structures and elements supported are: \textit{Arithmetic opera
 \end{table}
 \end{comment}
 
-Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool and the scalability of \textit{BTestBox}. To present that, giant B files were analysed and metrics were registered. A variety of lexical elements of the B language were created with nested instructions. They were designed to test the scalability of a B translator to LLVM~\cite{deharbebtestbox}. Those files may be classified by the number of nesting in command block of the operations. %the variable that define the generation of the files are the number of nesting in command block
+Our tool was also tested with the intention of expliciting the problems of using the \textit{ProB} tool, as well as presenting BTestBox's scalability. To do this, large B files were analysed and metrics were registered. A variety of lexical elements of the B language were created with nested instructions. They were designed to test the scalability of a B translator to LLVM~\cite{deharbebtestbox}. Those files may be classified by the number of nesting in command block of the operations. %the variable that define the generation of the files are the number of nesting in command block
 The results are shown in Table \ref{tab:escalabilidade}.  
 %and the quantity of blocks inside an operation. Such operations can be built around 1, 10, 50, 100 or 500 blocks and the nesting level varies between 1 and 5.
 
 %For the scalability tests, was used a computer with the operating system Windows 10 64 bits, with a processor Intel Core i5\-6300HQ 2300 GHz and 8 GB de memória RAM. We observed that the scalability may stick to minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree file necessary for \textit{BTestBox}.
-We initially used a computer with the Windows 10 64 bits operating system, with an Intel Core i56300HQ 2.300 GHz processor with 4 cores and 8 GB of RAM for the scalability tests. %We observed that the scalability might stick to a minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree files which are required for \textit{BTestBox}.
+We initially used a computer with the Windows 10 64 bits operating system, with an Intel Core i56300HQ 2.300 GHz processor with four cores and 8 GB of RAM for the scalability tests. %We observed that the scalability might stick to a minor size implementations since the Atelier-B, version 4.3.1, available on the computer does not generate the proof obligations and the BXML tree files which are required for \textit{BTestBox}.
 %
  %
 To improve the results, we researched and implemented threads inside the tool.
-This way, \textit{BTestBox} can execute its procedure to various operations at the same time.
-This severally reduce the time for the predicate evaluation. In Table \ref{tab:escalabilidade}, it is possible to observe the results of tests using a computer with 2 CPUs Intel Xeon Sixteen-Core E5-2698v3 2.300 GHz allocating with a maximum 20 cores and 80 GB of RAM. The time process was reduced approximately by ten times.
-All examples of Table \ref{tab:escalabilidade} can be easily executed in a leased cloud computer costing less than one US dollar with similar results.
+This way, \textit{BTestBox} can execute its process in many operations at the same time.
+This severally reduces the time needed for the evaluation of the predicate. In Table \ref{tab:escalabilidade}, it is possible to observe the results of tests performed using a computer with two Intel Xeon Sixteen-Core E5-2698v3 2.300 GHz CPUs allocating with a maximum 20 cores and 80 GB of RAM. 
+The processing time was reduced approximately by ten times.
+All of the examples shown in Table \ref{tab:escalabilidade} can be easily executed in a leased cloud computer costing less than one US dollar with similar results.
 Our experiments have shown that processing time is reduced approximately proportionally when we use a computer with more processing cores.
 
 % \marginpar{Pode ser excluido?}Additionally, the implementation provided in~\cite{deharbebtestbox} had to be adapted to be properly used with \textit{BTestBox}, but it did not lose any nesting or instruction. Such adaptations are needed because the implementations are not proved. They present decisions that perform mathematical calculus without a solution. Also, they have operation calls. In the current state, our tool is not able to manage operation calls due to the necessity of using a close Atelier-B function that was only available during the process of validation.
@@ -675,20 +676,23 @@ Another relevant difference is that \textit{BETA} is focused on unit testing, wh
 
 
 Currently, \textit{BTestBox} is a free and open-source tool under Berkeley-licensed software.
-This tool was born from an international collaboration between the academia and the software industry. The collaboration resulted in an initial version of the tool. Now, the goal is to increase the maturity of \textit{BTestBox} to deal with industrial applications.
+This tool was born from an international collaboration between the academy and the software industry. The collaboration resulted in an initial version of the tool. Now, the goal is to increase \textit{BTestBox}'s maturity to deal with industrial applications.
 The software is in continuous development.
 We believe that the tool offers an important contribution to the community.
 
-Several components were created with different B structures to test the functionality and correctness of the \textit{BTestBox}. More than 120 B concrete models were created to test the B language, and one model, simulating a real used B program, was provided by \textit{ClearSy}. \textit{BTestBox} is already capable of generating tests that verify MC/DC. Our tool is capable of generating tests to verify the Combinatorial Coverage, since it demands the test of all possible combinations of guards, achieving CoC implies in being successful at MC/DC. %Unfortunately, CoC generates a high number of tests. Efforts are concentrated in developing an approach to generate fewer test cases and achieve the required coverage.
+Several components were created with different B structures to test \textit{BTestBox}'s functionality and correctness. More than 120 B concrete models were created to test the B language, and one model, simulating a real used B program, was provided by \textit{ClearSy}. \textit{BTestBox} is already capable of generating tests that verify MC/DC. Our tool is capable of generating tests to verify the Combinatorial Coverage. Since it demands the test of all possible combinations of guards, achieving CoC implies in being successful at MC/DC. %Unfortunately, CoC generates a high number of tests. Efforts are concentrated in developing an approach to generate fewer test cases and achieve the required coverage.
 
 %BTestBox\textquotesingle s future research has to be towards improving the performance. This is a problem since it calls ProB and sometimes the model checker has to expand a big set or various sets. The time to run a predicate with many clauses is enormous in comparison with predicates without any expansion. To solve this, the predicate generated by \textit{BTestBox} has to be simplified with only the conditions that are bound to the variables that are used in operation.
 
 %When considering the evaluation of the predicate, \textit{BTestBox} inherits every limitation from the logic expression solver (ProB). There are other candidate solvers that help to minimise the restrictions, and they will be studied.
 
-Since  \textit{BTestBox} uses B translators, if the translator has any limitation to B language, it is also applied to our tool. However, there are several B translators, and the  \textit{BTestBox}'s approach is compatible with all of them, because the generated tests are also represented in B. 
+Since  \textit{BTestBox} uses B translators, if the translator has any limitation to B language, it is also applied to our tool. However, there are several B translators available, and the  \textit{BTestBox}'s approach is compatible with all of them, because the generated tests are also represented in B. 
 
-Significant improvements were developed in the tool, offering excellent results.
-The parallelization techniques applied reduced the process time and extended the power to generate tests for larger samples. We also adjusted small configurations on the tool to run on a remote computer with more processor cores. Those improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple\textquotesingle s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
+% Martin estamos mantendo em ingles britanico, ela parece que se confundiu nisso.
+% Estamos conversando aqui https://hangouts.google.com/call/N-lPJvbfE-2qny8gpehfAEEE   (MARITN ) VEJA SE TIVER TEMPO
+
+Significant improvements were developed in the tool, thus offering excellent results.
+The parallelisation techniques applied reduced the process time and extended the power to generate tests for larger samples. We also performed small configurations on the tool to run it on a remote computer with more processor cores. This improvement required changes that made our tool compatible with the most common operating systems (Microsoft’s Windows, Apple\textquotesingle s OS X and Linux distributions). All recent advances presented here are encouraging, showing performance numbers that are one order of magnitude better than for the previous version of the tool.
 
 %The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
 
