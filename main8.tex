@@ -35,31 +35,31 @@
 \author{Diego de Azevedo Oliveira \inst{1} \and %\orcidID{0000-1111-2222-3333} \and
 Val{\'e}rio Medeiros Jr\inst{2}\orcidID{0000-0001-6255-5026} \and
 David D{\'e}harbe\inst{3}\and %\orcidID{2222--3333-4444-5555} \and
-Martin A. Musicante \inst{1}\orcidID{0000-0001-5589-3895}
+Martin A. Musicante \inst{4}\orcidID{0000-0001-5589-3895}
 }
 %
 \authorrunning{D. Azevedo et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 
-% \institute{Universit{\'e} de Sherbrooke, Canada\\
-% \email{diegodeazevedooliveira@gmail.com}
-% \and
-% Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
-% \email{valerio.medeiros@ifrn.edu.br} \and
-% Clearsy System Engineering, France\\
-% \email{david.deharbe@clearsy.com}
-% \and
-% Universidade Federal do Rio Grande do Norte, Brazil\\
-% \email{mam@dimap.ufrn.br}}
-
-\institute{Universidade Federal do Rio Grande do Norte, Brazil\\
-\email{diegodeazevedooliveira@gmail.com}, \email{mam@dimap.ufrn.br}
+\institute{Universit{\'e} de Sherbrooke, Canada\\
+\email{diegodeazevedooliveira@gmail.com}
 \and
 Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
 \email{valerio.medeiros@ifrn.edu.br} \and
 Clearsy System Engineering, France\\
-\email{david.deharbe@clearsy.com}}
+\email{david.deharbe@clearsy.com}
+\and
+Universidade Federal do Rio Grande do Norte, Brazil\\
+\email{mam@dimap.ufrn.br}}
+
+% \institute{Universidade Federal do Rio Grande do Norte, Brazil\\
+% \email{diegodeazevedooliveira@gmail.com}, \email{mam@dimap.ufrn.br}
+% \and
+% Instituto Federal de Educa{\c c}{\~a}o, Ci{\^e}ncia e Tecnologia do Rio Grande do Norte, Brazil\\
+% \email{valerio.medeiros@ifrn.edu.br} \and
+% Clearsy System Engineering, France\\
+% \email{david.deharbe@clearsy.com}}
 
 
 %\institute{Université de Sherbrooke, Canada \and
@@ -382,7 +382,9 @@ In the case of the example, this will lead to the following test cases (for the 
 %\label{tab:TestCases}
 \end{center}
 
-\paragraph{Creating Test Case Files:} Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, \textit{BTestBox} creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
+\subsection{Creating Test Case Files}
+
+Our tool is capable of generating the test cases, inserting operations to manipulate the variables of an implementation under test, executing the translation, compare the results and report to the user. For this, \textit{BTestBox} creates copies of the user files and adds ``get'' and ``set'' operations. Also, it writes B components using the results of the evaluation of the predicates as the testing case files.
 
 The evaluation occurs after the translation using a B compiler, with a compiler provided by the user and supported by our tool, \textit{BTestBox} can compile and execute the translated code. Finally, a HTML report file is generated and presented to the user, displaying the coverage metrics, showing which coverage objectives are not reached and a shortcut for all the files used on the test.
 
@@ -547,19 +549,19 @@ But that is not all: \textit{BTestBox} also writes an HTML file that provides a 
 \end{comment}
 
 
-%\begin{itemize}
+\begin{itemize}
     %\item The clause group exercises the structures sees, extends, constants, constraints, imports, promotes, sets, variables, and local operations. Those elements are put in test in groups and separately to observe the changes in the predicate that each can perform.
-    $\bullet$ The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
+    \item The ``Clauses'' group with 14 examples exercises the \underline{sees}, \underline{extends}, \underline{constants}, \underline{constraints}, \underline{imports}, \underline{promotes}, \underline{sets}, \underline{variables} and \underline{operations}. Those elements are tested both in groups and separately. Those tests observe the changes that each element can perform in the predicate.
     
     %\item Operation calls employ the operation calls in different contexts.
-    $\bullet$ The ``Operation Call'' with 26 examples are in different contexts.
+    \item The ``Operation Call'' with 26 examples are in different contexts.
     
     %\item Depth blocks are sensitive to the instructions if-else, case, skip, while and assignment. They are grouped and nested to max depth of three. 
-    $\bullet$ The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
+    \item The ``Depth'' blocks with 89 examples are sensitive to the if-else, case, skip, while, and assignment instructions. They are grouped and nested to the maximum depth of three.
     
     %\item The industrial project is responsible for diverse contributions to \textit{BTestBox}, with B structures non previous tested. Unfortunately, the tests generated for this case are very time consuming due the necessity of sets expansions.
-    $\bullet$ The ``Industrial'' project with one big example is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
-    
+    \item The ``Industrial'' project with one big example is responsible for different contributions to the \textit{BTestBox}, with non-previously tested B structures. Unfortunately, the tests generated for this case are very time-consuming due to the necessity of set expansions.
+\end{itemize}
 
 
 All the presented implementation, excluding the industrial project, were exercised with all the coverage criteria supported by the \textit{BTestBox}. Even contributing to the development of our tool, the industrial project was not able to fully test the project because few data structures are not yet supported: matrices and trees. 
@@ -690,8 +692,9 @@ The parallelization techniques applied reduced the process time and extended the
 
 %The authors would like to thank ClearSy, IFRN, UFRN, CAPES and the anonymous referees for the support.
 
-%\section*{Acknowledgement}
-%  The authors would like to especially thank ClearSy System Engineering for providing the industrial case and support. The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions. The work is supported by the Federal Institute of the Rio Grande do Norte, the Federal University of Rio Grande do Norte and CAPES (Coordination of Improvement of Higher Level Personnel).
+\section*{Acknowledgement}
+  The authors would like to especially thank ClearSy System Engineering for providing the industrial case and support. %The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions.
+  The work is supported by the Federal Institute of the Rio Grande do Norte (IFRN), the Federal University of Rio Grande do Norte (UFRN), High Performance Computing Center at UFRN (NPAD/UFRN) and Coordination of Improvement of Higher Level Personnel (CAPES).
   %This work was grammatically reviewed by Antonio Henrique Nepomuceno Coelho (Federal English Teacher at IFRN).
 
 
